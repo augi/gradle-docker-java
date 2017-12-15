@@ -26,7 +26,7 @@ Usage
         volumes = ['/my-folder'] // list of volumes; default: empty
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
-        password = System.env('DOCKER_REGISTRY_PASSWORD')
+        password = System.getenv('DOCKER_REGISTRY_PASSWORD')
 	}
 
 The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover):
