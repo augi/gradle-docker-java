@@ -1,0 +1,86 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+        classpath 'com.gradle.publish:plugin-publish-plugin:0.9.9'
+    }
+}
+
+group 'cz.augi'
+version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: "com.gradle.plugin-publish"
+
+repositories {
+    jcenter()
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4'
+}
+
+dependencies {
+    compile gradleApi()
+
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile gradleTestKit()
+    testCompile ('org.spockframework:spock-core:1.0-groovy-2.4') {
+        exclude group:'org.codehaus.groovy'
+    }
+
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives sourcesJar
+}
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_KEY')
+    configurations = ['archives']
+    publish = true
+    pkg {
+        repo = 'maven'
+        name = 'gradle-docker-java'
+        desc = 'Gradle plugin that wraps your JVM application to Docker image.'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/augi/gradle-docker-java.git'
+        websiteUrl = 'https://github.com/augi/gradle-docker-java'
+        issueTrackerUrl = 'https://github.com/augi/gradle-docker-java/issues'
+        labels = ['gradle', 'docker', 'java', 'jvm']
+        version {
+            name = project.version
+            vcsTag = project.version
+        }
+    }
+}
+
+project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
+project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
+pluginBundle {
+    website = 'https://github.com/augi/gradle-docker-java'
+    vcsUrl = 'https://github.com/augi/gradle-docker-java'
+    description = 'Gradle plugin that wraps your JVM application to Docker image.'
+    tags = ['gradle', 'docker', 'java', 'jvm']
+
+    plugins {
+        dockerJavaPlugin {
+            id = 'cz.augi.gradle.dockerJava'
+            displayName = 'Gradle Docker Java plugin'
+        }
+    }
+}
