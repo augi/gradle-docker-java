@@ -7,7 +7,7 @@ Gradle plugin that wraps your JVM application to Docker image.
 It takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps to Docker image.
 
 Usage
-========================
+=====
 	buildscript {
 		repositories {
 			jcenter()
@@ -40,3 +40,7 @@ The plugin provides following tasks:
  * `dockerPush` - pushes the Docker image to Docker Registry
 
 The plugin executes `docker` command under the hood, so it supposes that [Docker Engine](https://www.docker.com/docker-engine) is installed and available in `PATH`.
+
+Motivation
+==========
+Almost all the JVM-based applications have the same Dockerfile so why to copy or write the same Dockerfile again and again?
