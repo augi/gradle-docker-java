@@ -33,7 +33,7 @@ Usage
 The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover):
 
     plugins {
-      id 'cz.augi.gradle.docker-java' version 'putCurrentVersionHere'
+      id 'cz.augi.docker-java' version 'putCurrentVersionHere'
     }
 
 The plugin provides following tasks:

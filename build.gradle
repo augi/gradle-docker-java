@@ -79,7 +79,7 @@ pluginBundle {
 
     plugins {
         dockerJavaPlugin {
-            id = 'cz.augi.gradle.dockerJava'
+            id = 'cz.augi.docker-java'
             displayName = 'Gradle Docker Java plugin'
         }
     }
