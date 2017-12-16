@@ -3,6 +3,7 @@ package cz.augi.gradle.dockerjava
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 
 class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     final Project project
@@ -13,22 +14,16 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
         this.project = project
     }
 
-    @Input
     String image
-    @Input
-    JavaVersion javaVersion
-    @Input
+    JavaVersion getJavaVersion() { customJavaVersion ?: project.targetCompatibility }
+    void setJavaVersion(JavaVersion version) { customJavaVersion = version }
+    private JavaVersion customJavaVersion
     String baseImage
-    @Input
     Integer[] ports = []
-    @Input
     String[] volumes = []
-    @Input
     String[] dockerfileLines = []
 
-    @Input
     String username
-    @Input
     String password
     String getRegistry() { image.substring(0, image.indexOf('/')) }
 }

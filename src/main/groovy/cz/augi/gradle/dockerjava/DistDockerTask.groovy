@@ -1,6 +1,7 @@
 package cz.augi.gradle.dockerjava
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -24,7 +25,7 @@ class DistDockerTask extends DefaultTask {
     def createDockerfile(File workDir, String tarFileName, String tarRootDirectory, CreateStartScripts startScripts) {
         def dockerFile = new File(workDir, 'Dockerfile')
         if (dockerExecutor.getDockerPlatform().toLowerCase().contains('win')) {
-            dockerFile << "FROM " + (settings.baseImage ?: 'openjdk:8u151-nanoserver-sac2016') + '\n'
+            dockerFile << "FROM " + (settings.baseImage ?: getWindowsBaseImage()) + '\n'
             dockerFile << 'SHELL ["cmd", "/S", "/C"]\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
@@ -35,7 +36,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "WORKDIR C:\\\\$tarRootDirectory\\\\bin\n"
             dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name}"
         } else {
-            dockerFile << "FROM " + (settings.baseImage ?: 'openjdk:8u151-jre-alpine') + '\n'
+            dockerFile << "FROM " + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
@@ -44,6 +45,32 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "ADD $tarFileName /var\n"
             dockerFile << "WORKDIR /var/$tarRootDirectory/bin\n"
             dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"]"
+        }
+    }
+
+    private String getWindowsBaseImage() {
+        switch (settings.javaVersion) {
+            case JavaVersion.VERSION_1_8:
+                'openjdk:8u151-nanoserver-sac2016'
+                break
+            case JavaVersion.VERSION_1_9:
+                'openjdk:9.0.1-jdk-nanoserver-sac2016'
+                break
+            default:
+                throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
+        }
+    }
+
+    private String getLinuxBaseImage() {
+        switch (settings.javaVersion) {
+            case JavaVersion.VERSION_1_8:
+                'openjdk:8u151-jre-alpine'
+                break
+            case JavaVersion.VERSION_1_9:
+                'openjdk:9.0.1-11-slim'
+                break
+            default:
+                throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
         }
     }
 
@@ -68,6 +95,8 @@ class DistDockerTask extends DefaultTask {
 interface DistDockerSettings {
     @Input
     String getImage()
+    @Input @Optional
+    JavaVersion getJavaVersion()
     @Input @Optional
     String getBaseImage()
     @Input @Optional
