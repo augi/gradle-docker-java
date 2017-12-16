@@ -1,8 +1,10 @@
 package cz.augi.gradle.dockerjava
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.Project
+import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.application.CreateStartScripts
 
@@ -14,6 +16,7 @@ class DistDockerTask extends DefaultTask {
         this.group = 'distribution'
     }
 
+    @Internal
     DockerExecutor dockerExecutor
     @Nested
     DistDockerSettings settings
@@ -47,7 +50,7 @@ class DistDockerTask extends DefaultTask {
     @TaskAction
     def create() {
         assert settings.image : 'Image must be specified'
-        def workDir = new File(settings.project.buildDir, 'dockerJava')
+        def workDir = new File(project.buildDir, 'dockerJava')
         Files.createDirectories(workDir.toPath())
         def tarFile = new File(workDir, 'dist.tar')
 
@@ -63,10 +66,14 @@ class DistDockerTask extends DefaultTask {
 }
 
 interface DistDockerSettings {
-    Project getProject()
+    @Input
     String getImage()
+    @Input @Optional
     String getBaseImage()
+    @Input @Optional
     Integer[] getPorts()
+    @Input @Optional
     String[] getVolumes()
+    @Input @Optional
     String[] getDockerfileLines()
 }

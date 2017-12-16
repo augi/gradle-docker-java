@@ -21,9 +21,10 @@ Usage
 	
 	dockerJava {
         image = "my-org/my-app:$version" // name of the resulting Docker image; mandatory
-        baseImage = 'my-org/our-base-image:1.2.3' // default: automatically choosed the best on based on current Docker platform
         ports = [80] // list of exposed ports; default: empty
         volumes = ['/my-folder'] // list of volumes; default: empty
+        baseImage = 'my-org/our-base-image:1.2.3' // default: automatically choosed the best on based on current Docker platform
+        dockerfileLines = ['RUN apt-get ...'] // additional lines to include to Dockerfile; default: empty
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
         password = System.getenv('DOCKER_REGISTRY_PASSWORD')
