@@ -27,7 +27,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "FROM " + (settings.baseImage ?: 'openjdk:8u151-nanoserver-sac2016') + '\n'
             dockerFile << 'SHELL ["cmd", "/S", "/C"]\n'
             if (settings.ports.any()) {
-                dockerFile << 'EXPOSE' + settings.ports.join(' ') + '\n'
+                dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
             settings.dockerfileLines.each { dockerFile << it + '\n' }
@@ -37,7 +37,7 @@ class DistDockerTask extends DefaultTask {
         } else {
             dockerFile << "FROM " + (settings.baseImage ?: 'openjdk:8u151-jre-alpine') + '\n'
             if (settings.ports.any()) {
-                dockerFile << 'EXPOSE' + settings.ports.join(' ') + '\n'
+                dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
             settings.dockerfileLines.each { dockerFile << it + '\n' }

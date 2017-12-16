@@ -30,6 +30,8 @@ class DockerJavaPluginTest extends Specification {
             mainClassName = 'cz.augi.gradle.dockerjava.TestApp'
             dockerJava {
                 image = "test/my-app:$version"
+                ports = [80, 8080]
+                volumes = ['/test-volume']
             }
         '''
         def appDirectory = Paths.get(projectDir.absolutePath, 'src', 'main', 'java', 'cz', 'augi', 'gradle', 'dockerjava')
