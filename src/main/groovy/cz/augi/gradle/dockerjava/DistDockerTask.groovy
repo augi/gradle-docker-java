@@ -44,6 +44,9 @@ class DistDockerTask extends DefaultTask {
             settings.dockerfileLines.each { dockerFile << it + '\n' }
             dockerFile << "ADD $tarFileName /var\n"
             dockerFile << "WORKDIR /var/$tarRootDirectory/bin\n"
+            if (settings.javaVersion == JavaVersion.VERSION_1_8) {
+                dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"\n'
+            }
             dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"]"
         }
     }
