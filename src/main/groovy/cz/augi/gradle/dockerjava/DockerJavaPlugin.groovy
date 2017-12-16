@@ -6,10 +6,19 @@ import org.gradle.api.Project
 class DockerJavaPlugin implements Plugin<Project> {
     @Override
     void apply(Project project) {
-        def extension = project.extensions.create('dockerJava', DockerJavaExtension, project)
+        project.plugins.apply 'application'
+
+        def dockerExecutor = new DockerExecutor(project)
+        def extension = project.extensions.create('dockerJava', DockerJavaExtension, project, dockerExecutor)
         def distDocker = project.tasks.create('distDocker', DistDockerTask)
         def dockerPush = project.tasks.create('dockerPush', DockerPushTask)
-        distDocker.extension = extension
-        dockerPush.extension = extension
+        distDocker.settings = extension
+        distDocker.dockerExecutor = dockerExecutor
+        dockerPush.settings = extension
+        dockerPush.dockerExecutor = dockerExecutor
+
+        distDocker.dependsOn project.tasks.distTar
+        dockerPush.dependsOn distDocker
+        project.tasks.assembleDist.dependsOn distDocker
     }
 }
