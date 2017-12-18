@@ -9,6 +9,7 @@ It takes product of `distTar` task (added by [the application plugin](https://do
 Usage
 =====
 Only `image` parameter is mandatory - it's name of the resulting image.
+
 	buildscript {
 		repositories {
 			jcenter()
