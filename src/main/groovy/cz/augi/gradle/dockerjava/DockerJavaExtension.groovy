@@ -26,4 +26,5 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     String username
     String password
     String getRegistry() { image.substring(0, image.indexOf('/')) }
+    Boolean removeImage = true
 }

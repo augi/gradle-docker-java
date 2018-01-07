@@ -30,6 +30,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
         password = System.getenv('DOCKER_REGISTRY_PASSWORD')
+        removeImage = false // indicates if the image should be removed after publishing, default is true
 	}
 
 The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover):

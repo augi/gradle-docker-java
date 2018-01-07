@@ -19,13 +19,21 @@ class DockerPushTask extends DefaultTask {
     @TaskAction
     def push() {
         def configFile = new File(project.buildDir, 'localDockerConfig')
-        project.exec {
-            it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
+        try {
+            project.exec {
+                it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
+            }
+            project.exec {
+                it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image
+            }
+        } finally {
+            configFile.delete()
         }
-        project.exec {
-            it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image
+        if (settings.removeImage) {
+            project.exec {
+                it.commandLine 'docker', 'rmi', '--force', settings.image
+            }
         }
-        configFile.delete()
     }
 }
 
@@ -38,4 +46,6 @@ interface DockerPushSettings {
     String getPassword()
     @Input
     String getRegistry()
+    @Input
+    Boolean getRemoveImage()
 }
