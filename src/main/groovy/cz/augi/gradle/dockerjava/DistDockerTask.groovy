@@ -24,6 +24,7 @@ class DistDockerTask extends DefaultTask {
 
     def createDockerfile(File workDir, String tarFileName, String tarRootDirectory, CreateStartScripts startScripts) {
         def dockerFile = new File(workDir, 'Dockerfile')
+        dockerFile.delete()
         if (dockerExecutor.getDockerPlatform().toLowerCase().contains('win')) {
             dockerFile << "FROM " + (settings.baseImage ?: getWindowsBaseImage()) + '\n'
             dockerFile << 'SHELL ["cmd", "/S", "/C"]\n'
