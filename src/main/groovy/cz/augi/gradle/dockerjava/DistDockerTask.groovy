@@ -27,7 +27,7 @@ class DistDockerTask extends DefaultTask {
         def dockerFile = new File(workDir, 'Dockerfile')
         dockerFile.delete()
         if (dockerExecutor.getDockerPlatform().toLowerCase().contains('win')) {
-            dockerFile << "FROM " + (settings.baseImage ?: getWindowsBaseImage()) + '\n'
+            dockerFile << 'FROM ' + (settings.baseImage ?: getWindowsBaseImage()) + '\n'
             dockerFile << 'SHELL ["cmd", "/S", "/C"]\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
@@ -38,7 +38,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "WORKDIR C:\\\\$tarRootDirectory\\\\bin\n"
             dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name}"
         } else {
-            dockerFile << "FROM " + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
+            dockerFile << 'FROM ' + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
@@ -47,7 +47,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "ADD $tarFileName /var\n"
             dockerFile << "WORKDIR /var/$tarRootDirectory/bin\n"
             if (settings.javaVersion == JavaVersion.VERSION_1_8) {
-                dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"\n'
+                dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS"\n'
             }
             dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"]"
         }
