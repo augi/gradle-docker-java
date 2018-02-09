@@ -9,6 +9,7 @@ import org.gradle.api.tasks.TaskAction
 class DockerPushTask extends DefaultTask {
     DockerPushTask() {
         this.group = 'distribution'
+        this.description = 'Pushes the existing image to Docker Registry.'
     }
 
     @Internal

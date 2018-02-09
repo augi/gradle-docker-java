@@ -15,6 +15,7 @@ import java.nio.file.StandardCopyOption
 class DistDockerTask extends DefaultTask {
     DistDockerTask() {
         this.group = 'distribution'
+        this.description = 'Build a new Docker image that contains JVM application built from current project.'
     }
 
     @Internal
