@@ -25,6 +25,14 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
 
     String username
     String password
-    String getRegistry() { image.substring(0, image.indexOf('/')) }
+    String getRegistry() {
+        if (customRegistry) return customRegistry
+        if (image.indexOf('/') < 0) return ''
+        // if the part before first slash contains dot then it's private Docker Registry
+        def potentialRegistry = image.substring(0, image.indexOf('/'))
+        if (potentialRegistry.contains('.')) potentialRegistry else ''
+    }
+    void setRegistry(String registry) { customRegistry = registry }
+    private String customRegistry
     Boolean removeImage = true
 }

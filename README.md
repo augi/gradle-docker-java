@@ -31,6 +31,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
         password = System.getenv('DOCKER_REGISTRY_PASSWORD')
+        registry = 'docker.company.com' // Docker registry used to login; default: tries to extract it from 'image'
         removeImage = false // indicates if the image should be removed after publishing, default is true
 	}
 
