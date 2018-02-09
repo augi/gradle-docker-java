@@ -6,6 +6,8 @@ import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.TaskAction
 
+import java.nio.charset.StandardCharsets
+
 class DockerPushTask extends DefaultTask {
     DockerPushTask() {
         this.group = 'distribution'
@@ -19,10 +21,12 @@ class DockerPushTask extends DefaultTask {
 
     @TaskAction
     def push() {
+        assert settings.image : 'Image must be specified'
         def configFile = new File(project.buildDir, 'localDockerConfig')
         try {
             project.exec {
-                it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
+                it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
+                it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
             }
             project.exec {
                 it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image

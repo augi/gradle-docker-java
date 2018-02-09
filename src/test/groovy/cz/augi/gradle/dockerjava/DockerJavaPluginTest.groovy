@@ -59,4 +59,21 @@ class DockerJavaPluginTest extends Specification {
         cleanup:
         projectDir.deleteDir()
     }
+
+    /* TODO: Build a test image and push it to Docker registry.
+    def "pushes to Docker Registry"() {
+        def project = ProjectBuilder.builder().build()
+        when:
+        project.plugins.apply 'docker-java'
+        project.dockerJava {
+            image = 'test-image'
+            username = 'testuser'
+            password = 'password_from_environment'
+        }
+        then:
+        def pushTask = project.tasks.dockerPush as DockerPushTask
+        pushTask.push()
+        cleanup:
+        project.projectDir.deleteDir()
+    }*/
 }
