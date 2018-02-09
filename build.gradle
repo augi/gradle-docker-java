@@ -27,10 +27,6 @@ repositories {
     jcenter()
 }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.4.1'
-}
-
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile ('org.spockframework:spock-core:1.1-groovy-2.4') {
