@@ -60,6 +60,7 @@ class DockerJavaPluginTest extends Specification {
         dockerRunOutput.contains('Hello from Docker')
         dockerInspectOutput.contains('1.0')
         dockerInspectOutput.contains('1.2.3')
+        dockerInspectOutput.contains('nenene')
         // schemaVersionLabel == '1.0'
         // versionLabel == '1.2.3'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
