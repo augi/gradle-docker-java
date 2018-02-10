@@ -22,6 +22,7 @@ class DockerJavaPluginTest extends Specification {
     }
 
     def "builds a new image that correctly wraps simple Java application"() {
+        def dockerExecutor = new DockerExecutor(ProjectBuilder.builder().build())
         def projectDir = File.createTempDir('test', 'gradleDockerJava')
         new File(projectDir, 'build.gradle') << '''
             plugins {
@@ -45,18 +46,24 @@ class DockerJavaPluginTest extends Specification {
         }
 '''
         when:
-        def result = GradleRunner.create()
+        def gradleExecutionResult = GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments('distDocker', '-Pversion=1.2.3')
+                .withArguments('distDocker', '-Pversion=1.2.3', '-S')
                 .withPluginClasspath()
                 .build()
-        def dockerOutput = new DockerExecutor(ProjectBuilder.builder().build()).execute('run', '--rm', 'test/my-app:1.2.3')
+        def dockerRunOutput = dockerExecutor.execute('run', '--rm', 'test/my-app:1.2.3')
+        def schemaVersionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.schema-version\\"}}', 'test/my-app:1.2.3')
+        def versionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.version\\"}}', 'test/my-app:1.2.3')
         then:
-        !result.output.contains('FAILED')
-        dockerOutput.contains('Hello from Docker')
+        !gradleExecutionResult.output.contains('FAILED')
+        dockerRunOutput.contains('Hello from Docker')
+        schemaVersionLabel == '1.0'
+        versionLabel == '1.2.3'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))
         cleanup:
+        dockerExecutor.execute('rmi', 'test/my-app:1.2.3')
+        dockerExecutor.project.projectDir.deleteDir()
         projectDir.deleteDir()
     }
 
