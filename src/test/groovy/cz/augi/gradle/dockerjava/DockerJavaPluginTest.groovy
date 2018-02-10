@@ -53,14 +53,14 @@ class DockerJavaPluginTest extends Specification {
                 .build()
         def dockerRunOutput = dockerExecutor.execute('run', '--rm', 'test/my-app:1.2.3')
         def dockerInspectOutput = dockerExecutor.execute('inspect', 'test/my-app:1.2.3')
-        // def schemaVersionLabel = dockerExecutor.execute('inspect' ,'--format', '"{{ index .Config.Labels \\"org.label-schema.schema-version\\"}}"', 'test/my-app:1.2.3')
-        //def versionLabel = dockerExecutor.execute('inspect' ,'--format', '"{{ index .Config.Labels \\"org.label-schema.version\\"}}"', 'test/my-app:1.2.3')
+        // The following commands end with exit-code 64 on TravisCI.
+        // def schemaVersionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.schema-version\\"}}', 'test/my-app:1.2.3')
+        // def versionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.version\\"}}', 'test/my-app:1.2.3')
         then:
         !gradleExecutionResult.output.contains('FAILED')
         dockerRunOutput.contains('Hello from Docker')
-        dockerInspectOutput.contains('1.0')
-        dockerInspectOutput.contains('1.2.3')
-        dockerInspectOutput.contains('nenene')
+        dockerInspectOutput.contains('"org.label-schema.schema-version": "1.0"')
+        dockerInspectOutput.contains('"org.label-schema.version": "1.2.3"')
         // schemaVersionLabel == '1.0'
         // versionLabel == '1.2.3'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
