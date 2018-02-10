@@ -52,8 +52,8 @@ class DockerJavaPluginTest extends Specification {
                 .withPluginClasspath()
                 .build()
         def dockerRunOutput = dockerExecutor.execute('run', '--rm', 'test/my-app:1.2.3')
-        def schemaVersionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.schema-version\\"}}', 'test/my-app:1.2.3')
-        def versionLabel = dockerExecutor.execute('inspect' ,'--format', '{{ index .Config.Labels \\"org.label-schema.version\\"}}', 'test/my-app:1.2.3')
+        def schemaVersionLabel = dockerExecutor.execute('inspect' ,'--format', '"{{ index .Config.Labels \\"org.label-schema.schema-version\\"}}"', 'test/my-app:1.2.3')
+        def versionLabel = dockerExecutor.execute('inspect' ,'--format', '"{{ index .Config.Labels \\"org.label-schema.version\\"}}"', 'test/my-app:1.2.3')
         then:
         !gradleExecutionResult.output.contains('FAILED')
         dockerRunOutput.contains('Hello from Docker')
