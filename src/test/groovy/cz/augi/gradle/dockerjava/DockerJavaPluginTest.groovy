@@ -1,5 +1,6 @@
 package cz.augi.gradle.dockerjava
 
+import groovy.json.JsonSlurper
 import org.gradle.testfixtures.ProjectBuilder
 import org.gradle.testkit.runner.GradleRunner
 import spock.lang.Specification
@@ -22,6 +23,7 @@ class DockerJavaPluginTest extends Specification {
     }
 
     def "builds a new image that correctly wraps simple Java application"() {
+        def dockerExecutor = new DockerExecutor(ProjectBuilder.builder().build())
         def projectDir = File.createTempDir('test', 'gradleDockerJava')
         new File(projectDir, 'build.gradle') << '''
             plugins {
@@ -45,18 +47,24 @@ class DockerJavaPluginTest extends Specification {
         }
 '''
         when:
-        def result = GradleRunner.create()
+        def gradleExecutionResult = GradleRunner.create()
                 .withProjectDir(projectDir)
-                .withArguments('distDocker', '-Pversion=1.2.3')
+                .withArguments('distDocker', '-Pversion=1.2.3', '-S')
                 .withPluginClasspath()
                 .build()
-        def dockerOutput = new DockerExecutor(ProjectBuilder.builder().build()).execute('run', '--rm', 'test/my-app:1.2.3')
+        def dockerRunOutput = dockerExecutor.execute('run', '--rm', 'test/my-app:1.2.3')
+        def dockerInspectOutput = dockerExecutor.execute('inspect', 'test/my-app:1.2.3')
+        def labels = new JsonSlurper().parseText(dockerInspectOutput)[0].Config.Labels
         then:
-        !result.output.contains('FAILED')
-        dockerOutput.contains('Hello from Docker')
+        !gradleExecutionResult.output.contains('FAILED')
+        dockerRunOutput.contains('Hello from Docker')
+        labels.'org.label-schema.schema-version' == '1.0'
+        labels.'org.label-schema.version' == '1.2.3'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))
         cleanup:
+        dockerExecutor.execute('rmi', 'test/my-app:1.2.3')
+        dockerExecutor.project.projectDir.deleteDir()
         projectDir.deleteDir()
     }
 

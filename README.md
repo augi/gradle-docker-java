@@ -3,8 +3,10 @@
 [![Build Status](https://travis-ci.org/augi/gradle-docker-java.svg)](https://travis-ci.org/augi/gradle-docker-java) [ ![Download](https://api.bintray.com/packages/augi/maven/gradle-docker-java/images/download.svg) ](https://bintray.com/augi/maven/gradle-docker-java/_latestVersion)
 
 Gradle plugin that wraps your JVM application to a new Docker image.
+ The image has [standard labels](http://label-schema.org/rc1/) derived from the build environment (environment variables, Git).
 
-It takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps it to Docker image.
+The plugin takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps it to Docker image.
+
 
 Usage
 =====

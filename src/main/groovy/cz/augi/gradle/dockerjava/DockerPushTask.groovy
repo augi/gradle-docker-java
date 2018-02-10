@@ -24,9 +24,11 @@ class DockerPushTask extends DefaultTask {
         assert settings.image : 'Image must be specified'
         def configFile = new File(project.buildDir, 'localDockerConfig')
         try {
-            project.exec {
-                it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
-                it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
+            if (settings.username) {
+                project.exec {
+                    it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
+                    it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
+                }
             }
             project.exec {
                 it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image

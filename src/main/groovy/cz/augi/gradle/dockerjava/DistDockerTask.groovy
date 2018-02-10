@@ -11,6 +11,7 @@ import org.gradle.api.tasks.application.CreateStartScripts
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
+import java.time.Clock
 
 class DistDockerTask extends DefaultTask {
     DistDockerTask() {
@@ -20,6 +21,8 @@ class DistDockerTask extends DefaultTask {
 
     @Internal
     DockerExecutor dockerExecutor
+    @Internal
+    GitExecutor gitExecutor
     @Nested
     DistDockerSettings settings
 
@@ -33,6 +36,7 @@ class DistDockerTask extends DefaultTask {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
+            dockerFile << 'LABEL ' + getLabels().collect { "\"${it.key}\"=\"${it.value}\"" }.join(' ') + '\n'
             settings.dockerfileLines.each { dockerFile << it + '\n' }
             dockerFile << "ADD $tarFileName C:\n"
             dockerFile << "WORKDIR C:\\\\$tarRootDirectory\\\\bin\n"
@@ -43,6 +47,7 @@ class DistDockerTask extends DefaultTask {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
+            dockerFile << 'LABEL ' + getLabels().collect { "\"${it.key}\"=\"${it.value}\"" }.join(' ') + '\n'
             settings.dockerfileLines.each { dockerFile << it + '\n' }
             dockerFile << "ADD $tarFileName /var\n"
             dockerFile << "WORKDIR /var/$tarRootDirectory/bin\n"
@@ -77,6 +82,58 @@ class DistDockerTask extends DefaultTask {
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
         }
+    }
+
+    private Map<String, String> getLabels() {
+        def labels = ['org.label-schema.schema-version':'1.0']
+        labels.put('org.label-schema.build-date', Clock.systemUTC().instant().toString())
+        labels.put('org.label-schema.version', project.version.toString())
+        labels.put('org.label-schema.name', project.name)
+        if (project.description) {
+            labels.put('org.label-schema.description', project.description)
+        }
+        def url = getUrl()
+        if (url) labels.put('org.label-schema.url', url)
+        def vcsUrl = getVcsUrl()
+        if (vcsUrl) labels.put('org.label-schema.vcs-url', vcsUrl)
+        def vcsRef = getVcsRef()
+        if (vcsRef) labels.put('org.label-schema.vcs-ref', vcsRef)
+        labels.put('org.label-schema.docker.cmd', "docker run -d ${settings.ports.collect { "-p $it:$it" }.join(' ')} ${settings.volumes.collect { "-v $it:$it" }.join(' ')} ${settings.image}")
+        labels
+    }
+
+    // following environment variables that can be present in various environments
+    //  * https://confluence.jetbrains.com/display/TCD10/Predefined+Build+Parameters
+    //  * https://wiki.jenkins.io/display/JENKINS/Building+a+software+project#Buildingasoftwareproject-belowJenkinsSetEnvironmentVariables
+    //  * https://docs.travis-ci.com/user/environment-variables/#Default-Environment-Variables
+    //  * https://circleci.com/docs/1.0/environment-variables/
+    //  * http://circleci.com/docs/2.0/env-vars/#build-details
+
+    private String getVcsUrl() {
+        def r = System.getenv('GIT_URL') ?: System.getenv('CIRCLE_REPOSITORY_URL')
+        if (r) return r
+        def slug = System.getenv('TRAVIS_PULL_REQUEST_SLUG') ?: System.getenv('TRAVIS_REPO_SLUG')
+        if (slug) return "https://github.com/$slug"
+        gitExecutor.getUrl()
+    }
+
+    private String getVcsRef() {
+        def r = System.getenv('GIT_COMMIT') ?: System.getenv('TRAVIS_COMMIT') ?: System.getenv('CIRCLE_SHA1')
+        if (r) return r
+        def fromTC = System.getenv().findAll { it.key.startsWith('BUILD_VCS_NUMBER') }.collect { it.value }.find()
+        if (fromTC) return fromTC
+        gitExecutor.getRef()
+    }
+
+    private String getVcsBranch() {
+        def r = System.getenv('GIT_BRANCH') ?: System.getenv('TRAVIS_PULL_REQUEST_BRANCH') ?: System.getenv('TRAVIS_BRANCH') ?: System.getenv('CIRCLE_BRANCH')
+        if (r) return r
+        gitExecutor.getBranch()
+    }
+
+    private String getUrl() {
+        def url = getVcsUrl()
+        if (url && url.startsWith('http')) url else null
     }
 
     @TaskAction
