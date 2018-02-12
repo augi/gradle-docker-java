@@ -4,6 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.platform.base.Platform
 import org.gradle.process.ExecSpec
+import org.gradle.util.VersionNumber
 
 class DockerExecutor {
     private final Project project
@@ -36,5 +37,9 @@ class DockerExecutor {
         String osType = getDockerInfo().find { it.startsWith('OSType:') }
         Platform
         osType.empty ? System.getProperty("os.name") : osType.substring('OSType:'.length()).trim()
+    }
+
+    VersionNumber getVersion() {
+        VersionNumber.parse(execute('version', '--format', '{{.Server.Version}}'))
     }
 }
