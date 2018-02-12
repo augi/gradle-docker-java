@@ -2,7 +2,6 @@ package cz.augi.gradle.dockerjava
 
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
-import org.gradle.platform.base.Platform
 import org.gradle.process.ExecSpec
 
 class GitExecutor {
@@ -16,11 +15,16 @@ class GitExecutor {
 
     String execute(String... args) {
         new ByteArrayOutputStream().withStream { os ->
-            project.exec { ExecSpec e ->
-                def finalArgs = ['git']
-                finalArgs.addAll(args)
-                e.commandLine finalArgs
-                e.standardOutput os
+            new ByteArrayOutputStream().withStream { es ->
+                project.exec { ExecSpec e ->
+                    def finalArgs = ['git']
+                    finalArgs.addAll(args)
+                    e.commandLine finalArgs
+                    e.standardOutput os
+                    e.errorOutput es
+                }
+                def eo = es.toString().trim()
+                if (eo) logger.debug("Error output from 'git ${args.join(' ')}' command: $eo")
             }
             os.toString().trim()
         }
