@@ -4,6 +4,7 @@ import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.gradle.util.VersionNumber
 
@@ -40,12 +41,19 @@ class DockerPushTask extends DefaultTask {
             project.exec {
                 it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image
             }
+            settings.alternativeImages.each { alternativeImage ->
+                project.exec {
+                    it.commandLine 'docker', '--config', configFile.absolutePath, 'push', alternativeImage
+                }
+            }
         } finally {
             configFile.delete()
         }
         if (settings.removeImage) {
+            def args = ['docker', 'rmi', '--force', settings.image]
+            args.addAll(settings.alternativeImages)
             project.exec {
-                it.commandLine 'docker', 'rmi', '--force', settings.image
+                it.commandLine(*args)
             }
         }
     }
@@ -54,6 +62,8 @@ class DockerPushTask extends DefaultTask {
 interface DockerPushSettings {
     @Input
     String getImage()
+    @Input @Optional
+    String[] getAlternativeImages()
     @Input
     String getUsername()
     @Input

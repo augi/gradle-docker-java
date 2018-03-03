@@ -24,7 +24,8 @@ Only `image` parameter is mandatory - it's name of the resulting image.
 	apply plugin: 'docker-java'
 	
 	dockerJava {
-        image = "my-org/my-app:$version" // name of the resulting Docker image; mandatory
+        image = "myorg/my-app:$version" // name of the resulting Docker image; mandatory
+        alternativeImages = ["myorg/my-app:latest"] // array of alternative image names; default is empty
         ports = [80] // list of exposed ports; default: empty
         volumes = ['/my-folder'] // list of volumes; default: empty
         baseImage = 'my-org/our-base-image:1.2.3' // default: automatically choosed the best based on current Docker platform and Java version

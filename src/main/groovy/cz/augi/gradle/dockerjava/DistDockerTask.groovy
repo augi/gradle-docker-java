@@ -150,13 +150,18 @@ class DistDockerTask extends DefaultTask {
         CreateStartScripts startScripts = settings.project.tasks.startScripts
         createDockerfile(workDir, tarFile.name, tarRootDirectory, startScripts)
 
-        dockerExecutor.execute('build', '-t', settings.image, workDir.absolutePath)
+        def args = ['build', '-t', settings.image]
+        settings.alternativeImages.each { args.addAll(['-t', it]) }
+        args.add(workDir.absolutePath)
+        dockerExecutor.execute(*args)
     }
 }
 
 interface DistDockerSettings {
     @Input
     String getImage()
+    @Input @Optional
+    String[] getAlternativeImages()
     @Input @Optional
     JavaVersion getJavaVersion()
     @Input @Optional

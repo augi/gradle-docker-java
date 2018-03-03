@@ -15,6 +15,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     }
 
     String image
+    String[] alternativeImages = []
     JavaVersion getJavaVersion() { customJavaVersion ?: project.targetCompatibility }
     void setJavaVersion(JavaVersion version) { customJavaVersion = version }
     private JavaVersion customJavaVersion
