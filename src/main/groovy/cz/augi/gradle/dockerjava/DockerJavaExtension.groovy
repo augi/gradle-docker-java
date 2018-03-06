@@ -2,8 +2,6 @@ package cz.augi.gradle.dockerjava
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 
 class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     final Project project
