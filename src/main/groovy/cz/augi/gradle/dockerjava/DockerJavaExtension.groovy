@@ -22,8 +22,8 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     String[] volumes = []
     String[] dockerfileLines = []
 
-    String username = ''
-    String password = ''
+    String username
+    String password
     String getRegistry() {
         if (customRegistry) return customRegistry
         if (image.indexOf('/') < 0) return ''

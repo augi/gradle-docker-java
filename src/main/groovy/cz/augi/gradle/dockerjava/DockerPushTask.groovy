@@ -39,11 +39,21 @@ class DockerPushTask extends DefaultTask {
                 }
             }
             project.exec {
-                it.commandLine 'docker', '--config', configFile.absolutePath, 'push', settings.image
+                def args = ['docker']
+                if (settings.username) {
+                    args.addAll(['--config', configFile.absolutePath])
+                }
+                args.addAll(['push', settings.image])
+                it.commandLine(*args)
             }
             settings.alternativeImages.each { alternativeImage ->
+                def args = ['docker']
+                if (settings.username) {
+                    args.addAll(['--config', configFile.absolutePath])
+                }
+                args.addAll(['push', alternativeImage])
                 project.exec {
-                    it.commandLine 'docker', '--config', configFile.absolutePath, 'push', alternativeImage
+                    it.commandLine(*args)
                 }
             }
         } finally {
@@ -64,9 +74,9 @@ interface DockerPushSettings {
     String getImage()
     @Input @Optional
     String[] getAlternativeImages()
-    @Input
+    @Input @Optional
     String getUsername()
-    @Input
+    @Input @Optional
     String getPassword()
     @Input
     String getRegistry()
