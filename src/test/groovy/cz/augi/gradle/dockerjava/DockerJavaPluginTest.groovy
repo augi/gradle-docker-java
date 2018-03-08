@@ -34,6 +34,7 @@ class DockerJavaPluginTest extends Specification {
                 image = "test/my-app:$version"
                 ports = [80, 8080]
                 volumes = ['/test-volume']
+                labels = ['mylabel':'mylabelvalue']
             }
         '''
         def appDirectory = Paths.get(projectDir.absolutePath, 'src', 'main', 'java', 'cz', 'augi', 'gradle', 'dockerjava')
@@ -60,6 +61,7 @@ class DockerJavaPluginTest extends Specification {
         dockerRunOutput.contains('Hello from Docker')
         labels.'org.label-schema.schema-version' == '1.0'
         labels.'org.label-schema.version' == '1.2.3'
+        labels.'mylabel' == 'mylabelvalue'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))
         cleanup:

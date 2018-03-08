@@ -27,6 +27,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         image = "myorg/my-app:$version" // name of the resulting Docker image; mandatory
         alternativeImages = ["myorg/my-app:latest"] // array of alternative image names; default is empty
         ports = [80] // list of exposed ports; default: empty
+        labels = ['mylabel':'mylabelvalue'] // additonal labels of Dockerfile; default: empty
         volumes = ['/my-folder'] // list of volumes; default: empty
         baseImage = 'my-org/our-base-image:1.2.3' // default: automatically choosed the best based on current Docker platform and Java version
         javaVersion = JavaVersion.VERSION_1_8 // Java version used to choose appropriate base Docker image; default: project.targetCompatibility

@@ -20,6 +20,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     String baseImage
     Integer[] ports = []
     String[] volumes = []
+    Map<String, String> labels = [:]
     String[] dockerfileLines = []
 
     String username

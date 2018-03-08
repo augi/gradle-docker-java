@@ -99,6 +99,7 @@ class DistDockerTask extends DefaultTask {
         def vcsRef = getVcsRef()
         if (vcsRef) labels.put('org.label-schema.vcs-ref', vcsRef)
         labels.put('org.label-schema.docker.cmd', "docker run -d ${settings.ports.collect { "-p $it:$it" }.join(' ')} ${settings.volumes.collect { "-v $it:$it" }.join(' ')} ${settings.image}")
+        labels.putAll(settings.labels)
         labels
     }
 
@@ -170,6 +171,8 @@ interface DistDockerSettings {
     Integer[] getPorts()
     @Input @Optional
     String[] getVolumes()
+    @Input @Optional
+    Map<String, String> getLabels()
     @Input @Optional
     String[] getDockerfileLines()
 }
