@@ -150,7 +150,7 @@ class DistDockerTask extends DefaultTask {
     @TaskAction
     def create() {
         assert settings.image : 'Image must be specified'
-        def workDir = new File(project.buildDir, 'dockerJava')
+        def workDir = settings.dockerBuildDirectory
         Files.createDirectories(workDir.toPath())
         def tarFile = new File(workDir, 'dist.tar')
 
@@ -185,4 +185,6 @@ interface DistDockerSettings {
     Map<String, String> getLabels()
     @Input @Optional
     String[] getDockerfileLines()
+    @Input @Optional
+    File getDockerBuildDirectory()
 }

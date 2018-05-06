@@ -10,6 +10,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     DockerJavaExtension(Project project, DockerExecutor dockerExecutor) {
         this.dockerExecutor = dockerExecutor
         this.project = project
+        this.dockerBuildDirectory = new File(project.buildDir, 'dockerJava')
     }
 
     String image
@@ -22,6 +23,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     String[] volumes = []
     Map<String, String> labels = [:]
     String[] dockerfileLines = []
+    File dockerBuildDirectory
 
     String username
     String password
