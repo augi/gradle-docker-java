@@ -61,9 +61,12 @@ class DistDockerTask extends DefaultTask {
     private String getWindowsBaseImage() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                'openjdk:8u161-nanoserver-sac2016'
+                'openjdk:8u171-nanoserver-sac2016'
                 break
             case JavaVersion.VERSION_1_9:
+            case JavaVersion.VERSION_1_10:
+            case JavaVersion.VERSION_11:
+            case JavaVersion.VERSION_HIGHER:
                 'openjdk:9.0.4-jdk-nanoserver-sac2016'
                 break
             default:
@@ -77,7 +80,14 @@ class DistDockerTask extends DefaultTask {
                 'openjdk:8u151-jre-alpine'
                 break
             case JavaVersion.VERSION_1_9:
-                'openjdk:9.0.1-11-jre-slim'
+                'openjdk:9.0.4-12-jre-slim'
+                break
+            case JavaVersion.VERSION_1_10:
+                'openjdk:10.0.1-10-jre-slim'
+                break
+            case JavaVersion.VERSION_11:
+            case JavaVersion.VERSION_HIGHER:
+                'openjdk:11-jre-slim'
                 break
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
