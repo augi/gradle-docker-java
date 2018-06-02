@@ -4,6 +4,7 @@
 
 Gradle plugin that wraps your JVM application to a new Docker image.
  The image has [standard labels](http://label-schema.org/rc1/) derived from the build environment (environment variables, Git).
+ Almost all the logic on Dockerfile generation is in [this file](src/main/groovy/cz/augi/gradle/dockerjava/DistDockerTask.groovy).
 
 The plugin takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps it to Docker image.
 
@@ -40,7 +41,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         removeImage = false // indicates if the image should be removed after publishing, default is true
 	}
 
-The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.gradle.wartremover):
+The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.docker-java):
 
     plugins {
       id 'cz.augi.docker-java' version 'putCurrentVersionHere'
