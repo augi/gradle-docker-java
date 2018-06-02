@@ -77,7 +77,7 @@ class DistDockerTask extends DefaultTask {
     private String getLinuxBaseImage() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                'openjdk:8u151-jre-alpine'
+                'openjdk:8u171-jre-slim'
                 break
             case JavaVersion.VERSION_1_9:
                 'openjdk:9.0.4-12-jre-slim'
