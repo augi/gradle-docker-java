@@ -150,21 +150,29 @@ class DistDockerTask extends DefaultTask {
     @TaskAction
     def create() {
         assert settings.image : 'Image must be specified'
-        def workDir = settings.dockerBuildDirectory
-        Files.createDirectories(workDir.toPath())
-        def tarFile = new File(workDir, 'dist.tar')
+        if (settings.customDockerfile) {
+            def args = ['build', '-t', settings.image]
+            settings.alternativeImages.each { args.addAll(['-t', it]) }
+            args.addAll(['--file', settings.customDockerfile.name])
+            args.add(settings.customDockerfile.parentFile.absolutePath)
+            dockerExecutor.execute(*args)
+        } else {
+            def workDir = settings.dockerBuildDirectory
+            Files.createDirectories(workDir.toPath())
+            def tarFile = new File(workDir, 'dist.tar')
 
-        File sourceTar = settings.project.tasks.distTar.archivePath
-        Files.copy(sourceTar.toPath(), tarFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+            File sourceTar = settings.project.tasks.distTar.archivePath
+            Files.copy(sourceTar.toPath(), tarFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
-        String tarRootDirectory = sourceTar.name.substring(0, sourceTar.name.lastIndexOf('.'))
-        CreateStartScripts startScripts = settings.project.tasks.startScripts
-        createDockerfile(workDir, tarFile.name, tarRootDirectory, startScripts)
+            String tarRootDirectory = sourceTar.name.substring(0, sourceTar.name.lastIndexOf('.'))
+            CreateStartScripts startScripts = project.tasks.startScripts
+            createDockerfile(workDir, tarFile.name, tarRootDirectory, startScripts)
 
-        def args = ['build', '-t', settings.image]
-        settings.alternativeImages.each { args.addAll(['-t', it]) }
-        args.add(workDir.absolutePath)
-        dockerExecutor.execute(*args)
+            def args = ['build', '-t', settings.image]
+            settings.alternativeImages.each { args.addAll(['-t', it]) }
+            args.add(workDir.absolutePath)
+            dockerExecutor.execute(*args)
+        }
     }
 }
 
@@ -189,4 +197,6 @@ interface DistDockerSettings {
     String[] getArguments()
     @Input @Optional
     File getDockerBuildDirectory()
+    @Input @Optional
+    File getCustomDockerfile()
 }

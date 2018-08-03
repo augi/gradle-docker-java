@@ -35,11 +35,12 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         dockerfileLines = ['RUN apt-get ...'] // additional lines to include to Dockerfile; default: empty
         arguments = ['--server'] // arguments to be passed to your application; default: empty
         dockerBuildDirectory = project.file('my-directory') // directory where Dockerfile is created; default: "$buildDir/dockerJava"
+        customDockerfile = file('Dockerfile') // path to a custom Dockerfile - then all of the previous options (except image and alternativeImages) are ignored; default: null
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
         password = System.getenv('DOCKER_REGISTRY_PASSWORD')
         registry = 'docker.company.com' // Docker registry used to login; default: tries to extract it from 'image'
-        removeImage = false // indicates if the image should be removed after publishing, default is true
+        removeImage = false // indicates if the image should be removed after publishing, default is true        
 	}
 
 The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.docker-java):
