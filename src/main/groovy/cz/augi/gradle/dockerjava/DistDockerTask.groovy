@@ -40,7 +40,7 @@ class DistDockerTask extends DefaultTask {
             settings.dockerfileLines.each { dockerFile << it + '\n' }
             dockerFile << "ADD $tarFileName C:\n"
             dockerFile << "WORKDIR C:\\\\$tarRootDirectory\\\\bin\n"
-            dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name}"
+            dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name} ${settings.arguments.join(' ')}"
         } else {
             dockerFile << 'FROM ' + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
             if (settings.ports.any()) {
@@ -54,7 +54,7 @@ class DistDockerTask extends DefaultTask {
             if (settings.javaVersion == JavaVersion.VERSION_1_8) {
                 dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS"\n'
             }
-            dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"]"
+            dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"${settings.arguments.collect { ",\"$it\"" }.join('')}]"
         }
     }
 
@@ -185,6 +185,8 @@ interface DistDockerSettings {
     Map<String, String> getLabels()
     @Input @Optional
     String[] getDockerfileLines()
+    @Input @Optional
+    String[] getArguments()
     @Input @Optional
     File getDockerBuildDirectory()
 }

@@ -35,6 +35,7 @@ class DockerJavaPluginTest extends Specification {
                 ports = [80, 8080]
                 volumes = ['/test-volume']
                 labels = ['mylabel':'mylabelvalue']
+                arguments = ['developer']
             }
         '''
         def appDirectory = Paths.get(projectDir.absolutePath, 'src', 'main', 'java', 'cz', 'augi', 'gradle', 'dockerjava')
@@ -43,7 +44,7 @@ class DockerJavaPluginTest extends Specification {
         package cz.augi.gradle.dockerjava;
         public class TestApp {
             public static void main(String[] args) {
-                System.out.println("Hello from Docker");
+                System.out.println("Hello from Docker, " + args[0]);
             }
         }
 '''
@@ -58,7 +59,7 @@ class DockerJavaPluginTest extends Specification {
         def labels = new JsonSlurper().parseText(dockerInspectOutput)[0].Config.Labels
         then:
         !gradleExecutionResult.output.contains('FAILED')
-        dockerRunOutput.contains('Hello from Docker')
+        dockerRunOutput.contains('Hello from Docker, developer')
         labels.'org.label-schema.schema-version' == '1.0'
         labels.'org.label-schema.version' == '1.2.3'
         labels.'mylabel' == 'mylabelvalue'

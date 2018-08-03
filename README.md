@@ -33,6 +33,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         baseImage = 'my-org/our-base-image:1.2.3' // default: automatically choosed the best based on current Docker platform and Java version
         javaVersion = JavaVersion.VERSION_1_8 // Java version used to choose appropriate base Docker image; default: project.targetCompatibility
         dockerfileLines = ['RUN apt-get ...'] // additional lines to include to Dockerfile; default: empty
+        arguments = ['--server'] // arguments to be passed to your application; default: empty
         dockerBuildDirectory = project.file('my-directory') // directory where Dockerfile is created; default: "$buildDir/dockerJava"
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
