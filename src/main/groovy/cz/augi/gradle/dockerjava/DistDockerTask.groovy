@@ -154,6 +154,7 @@ class DistDockerTask extends DefaultTask {
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
             args.addAll(['--file', settings.customDockerfile.name])
+            settings.buildArgs.each { args.addAll(['--build-arg', it]) }
             args.add(settings.customDockerfile.parentFile.absolutePath)
             dockerExecutor.execute(*args)
         } else {
@@ -199,4 +200,6 @@ interface DistDockerSettings {
     File getDockerBuildDirectory()
     @Input @Optional
     File getCustomDockerfile()
+    @Input @Optional
+    String[] getBuildArgs()
 }

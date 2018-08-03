@@ -26,6 +26,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     String[] arguments = []
     File dockerBuildDirectory
     File customDockerfile
+    String[] buildArgs = []
 
     String username
     String password

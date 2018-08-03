@@ -36,6 +36,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         arguments = ['--server'] // arguments to be passed to your application; default: empty
         dockerBuildDirectory = project.file('my-directory') // directory where Dockerfile is created; default: "$buildDir/dockerJava"
         customDockerfile = file('Dockerfile') // path to a custom Dockerfile - then all of the previous options (except image and alternativeImages) are ignored; default: null
+        buildArgs = ['version=1.2.3'] // build arguments to be send to 'docker build' command when using custom Dockerfile; default: empty
         // username and password are used if the Docker Registry requires credentials for pushing
         username = 'registry-username'
         password = System.getenv('DOCKER_REGISTRY_PASSWORD')
