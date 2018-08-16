@@ -24,24 +24,24 @@ class DockerPushTask extends DefaultTask {
     @TaskAction
     def push() {
         assert settings.image : 'Image must be specified'
-        def configFile = new File(project.buildDir, 'localDockerConfig')
+        def dockerConfigDir = new File(project.buildDir, 'localDockerConfig')
         try {
             if (settings.username) {
                 if (dockerExecutor.version >= VersionNumber.parse('17.07.0')) {
                     project.exec {
-                        it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
+                        it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
                         it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
                     }
                 } else {
                     project.exec {
-                        it.commandLine 'docker', '--config', configFile.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
+                        it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
                     }
                 }
             }
             project.exec {
                 def args = ['docker']
                 if (settings.username) {
-                    args.addAll(['--config', configFile.absolutePath])
+                    args.addAll(['--config', dockerConfigDir.absolutePath])
                 }
                 args.addAll(['push', settings.image])
                 it.commandLine(*args)
@@ -49,7 +49,7 @@ class DockerPushTask extends DefaultTask {
             settings.alternativeImages.each { alternativeImage ->
                 def args = ['docker']
                 if (settings.username) {
-                    args.addAll(['--config', configFile.absolutePath])
+                    args.addAll(['--config', dockerConfigDir.absolutePath])
                 }
                 args.addAll(['push', alternativeImage])
                 project.exec {
@@ -57,7 +57,12 @@ class DockerPushTask extends DefaultTask {
                 }
             }
         } finally {
-            configFile.delete()
+            if (dockerConfigDir.exists()) {
+                if (dockerConfigDir.directory) {
+                    dockerConfigDir.listFiles().each { it.delete() }
+                }
+                dockerConfigDir.delete()
+            }
         }
         if (settings.removeImage) {
             def args = ['docker', 'rmi', '--force', settings.image]
