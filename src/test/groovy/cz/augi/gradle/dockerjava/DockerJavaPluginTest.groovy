@@ -66,7 +66,7 @@ class DockerJavaPluginTest extends Specification {
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))
         cleanup:
-        //dockerExecutor.execute('rmi', 'test/my-app:1.2.3')
+        dockerExecutor.execute('rmi', 'test/my-app:1.2.3')
         dockerExecutor.project.projectDir.deleteDir()
         projectDir.deleteDir()
     }

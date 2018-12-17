@@ -163,7 +163,7 @@ class DistDockerTask extends DefaultTask {
             settings.alternativeImages.each { args.addAll(['-t', it]) }
             args.addAll(['--file', settings.customDockerfile.name])
             settings.buildArgs.each { args.addAll(['--build-arg', it]) }
-            args.add(workDir.absolutePath)
+            args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         } else {
             def tarFile = new File(workDir.toFile(), 'dist.tar')
@@ -177,7 +177,7 @@ class DistDockerTask extends DefaultTask {
 
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
-            args.add(workDir.absolutePath)
+            args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         }
     }
