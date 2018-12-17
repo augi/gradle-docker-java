@@ -10,6 +10,7 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.application.CreateStartScripts
 
 import java.nio.file.Files
+import java.nio.file.Path
 import java.nio.file.StandardCopyOption
 import java.time.Clock
 
@@ -152,16 +153,19 @@ class DistDockerTask extends DefaultTask {
     @TaskAction
     def create() {
         assert settings.image : 'Image must be specified'
+        Path workDir = settings.customDockerfile ? settings.customDockerfile.parentFile.toPath() : settings.dockerBuildDirectory.toPath
+        Files.createDirectories(workDir)
+        if (settings.filesToCopy) {
+            settings.filesToCopy.each { Files.copy(it.toPath(), workDir.resolve(it.name), StandardCopyOption.REPLACE_EXISTING) }
+        }
         if (settings.customDockerfile) {
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
             args.addAll(['--file', settings.customDockerfile.name])
             settings.buildArgs.each { args.addAll(['--build-arg', it]) }
-            args.add(settings.customDockerfile.parentFile.absolutePath)
+            args.add(workDir.absolutePath)
             dockerExecutor.execute(*args)
         } else {
-            def workDir = settings.dockerBuildDirectory
-            Files.createDirectories(workDir.toPath())
             def tarFile = new File(workDir, 'dist.tar')
 
             File sourceTar = settings.project.tasks.distTar.archivePath
@@ -200,6 +204,8 @@ interface DistDockerSettings {
     String[] getArguments()
     @Input @Optional
     File getDockerBuildDirectory()
+    @Input @Optional
+    File[] getFilesToCopy()
     @Input @Optional
     File getCustomDockerfile()
     @Input @Optional
