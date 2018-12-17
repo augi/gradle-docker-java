@@ -153,7 +153,7 @@ class DistDockerTask extends DefaultTask {
     @TaskAction
     def create() {
         assert settings.image : 'Image must be specified'
-        Path workDir = settings.customDockerfile ? settings.customDockerfile.parentFile.toPath() : settings.dockerBuildDirectory.toPath
+        Path workDir = settings.customDockerfile ? settings.customDockerfile.parentFile.toPath() : settings.dockerBuildDirectory.toPath()
         Files.createDirectories(workDir)
         if (settings.filesToCopy) {
             settings.filesToCopy.each { Files.copy(it.toPath(), workDir.resolve(it.name), StandardCopyOption.REPLACE_EXISTING) }
@@ -166,14 +166,14 @@ class DistDockerTask extends DefaultTask {
             args.add(workDir.absolutePath)
             dockerExecutor.execute(*args)
         } else {
-            def tarFile = new File(workDir, 'dist.tar')
+            def tarFile = new File(workDir.toFile(), 'dist.tar')
 
             File sourceTar = settings.project.tasks.distTar.archivePath
             Files.copy(sourceTar.toPath(), tarFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
             String tarRootDirectory = sourceTar.name.substring(0, sourceTar.name.lastIndexOf('.'))
             CreateStartScripts startScripts = project.tasks.startScripts
-            createDockerfile(workDir, tarFile.name, tarRootDirectory, startScripts)
+            createDockerfile(workDir.toFile(), tarFile.name, tarRootDirectory, startScripts)
 
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
