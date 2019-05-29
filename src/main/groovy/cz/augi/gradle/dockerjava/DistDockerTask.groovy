@@ -62,20 +62,18 @@ class DistDockerTask extends DefaultTask {
     private String getWindowsBaseImage() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                'openjdk:8u201-windowsservercore-ltsc2016'
+                'openjdk:8u212-jre-windowsservercore-ltsc2016'
                 break
             case JavaVersion.VERSION_1_9:
             case JavaVersion.VERSION_1_10:
-                'openjdk:10.0.2-nanoserver-sac2016'
-                break
             case JavaVersion.VERSION_11:
-                'openjdk:11.0.2-windowsservercore-ltsc2016'
+                'openjdk:11.0.3-windowsservercore-ltsc2016'
                 break
             case JavaVersion.VERSION_12:
-                'openjdk:12-ea-29-windowsservercore-ltsc2016'
+                'openjdk:12.0.1-windowsservercore-ltsc2016'
                 break
             case JavaVersion.VERSION_HIGHER:
-                'openjdk:13-ea-5-windowsservercore-ltsc2016'
+                'openjdk:13-ea-22-windowsservercore-ltsc2016'
                 break
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
@@ -85,20 +83,16 @@ class DistDockerTask extends DefaultTask {
     private String getLinuxBaseImage() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                'openjdk:8u181-jre-slim'
+                'openjdk:8u212-jre-slim'
                 break
             case JavaVersion.VERSION_1_9:
             case JavaVersion.VERSION_1_10:
-                'openjdk:10.0.2-jre-slim'
-                break
             case JavaVersion.VERSION_11:
-                'openjdk:11.0.1-jre-slim'
+                'openjdk:11.0.3-jre-slim'
                 break
             case JavaVersion.VERSION_12:
-                'openjdk:12-ea-29-alpine'
-                break
             case JavaVersion.VERSION_HIGHER:
-                'openjdk:13-ea-5-alpine'
+                'openjdk:13-ea-19-alpine'
                 break
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
