@@ -15,20 +15,30 @@ class DockerExecutor {
         this.logger = project.logger
     }
 
-    String execute(String... args) {
+    String executeToString(String... args) {
         new ByteArrayOutputStream().withStream { os ->
-            project.exec { ExecSpec e ->
-                def finalArgs = ['docker']
-                finalArgs.addAll(args)
-                e.commandLine finalArgs
-                e.standardOutput os
-            }
+            executeWithCustomOutput(os, args)
             os.toString().trim()
         }
     }
 
+    void execute(String... args) {
+        executeWithCustomOutput(null, args)
+    }
+
+    private void executeWithCustomOutput(OutputStream os, String... args) {
+        project.exec { ExecSpec e ->
+            def finalArgs = ['docker']
+            finalArgs.addAll(args)
+            e.commandLine finalArgs
+            if (os != null) {
+                e.standardOutput os
+            }
+        }
+    }
+
     List<String> getDockerInfo() {
-        def asString = execute('info')
+        def asString = executeToString('info')
         logger.debug("Docker info: $asString")
         asString.readLines()
     }
@@ -40,6 +50,6 @@ class DockerExecutor {
     }
 
     VersionNumber getVersion() {
-        VersionNumber.parse(execute('version', '--format', '{{.Server.Version}}'))
+        VersionNumber.parse(executeToString('version', '--format', '{{.Server.Version}}'))
     }
 }
