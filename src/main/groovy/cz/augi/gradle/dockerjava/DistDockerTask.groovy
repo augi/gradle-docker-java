@@ -60,40 +60,24 @@ class DistDockerTask extends DefaultTask {
     }
 
     private String getWindowsBaseImage() {
-        switch (settings.javaVersion) {
-            case JavaVersion.VERSION_1_8:
-                'openjdk:8u212-jre-windowsservercore-ltsc2016'
-                break
-            case JavaVersion.VERSION_1_9:
-            case JavaVersion.VERSION_1_10:
-            case JavaVersion.VERSION_11:
-                'openjdk:11.0.3-windowsservercore-ltsc2016'
-                break
-            case JavaVersion.VERSION_12:
-                'openjdk:12.0.1-windowsservercore-ltsc2016'
-                break
-            case JavaVersion.VERSION_HIGHER:
-                'openjdk:13-ea-22-windowsservercore-ltsc2016'
-                break
-            default:
-                throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
-        }
+        getAdoptOpenJdkBaseImageNamePrefix() + '-windowsservercore-ltsc2016'
     }
 
     private String getLinuxBaseImage() {
+        getAdoptOpenJdkBaseImageNamePrefix() + '-bionic'
+    }
+
+    private String getAdoptOpenJdkBaseImageNamePrefix() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                'openjdk:8u212-jre-slim'
-                break
+                return 'adoptopenjdk:8u242-b08-jre-openj9-0.18.1'
             case JavaVersion.VERSION_1_9:
             case JavaVersion.VERSION_1_10:
             case JavaVersion.VERSION_11:
-                'openjdk:11.0.3-jre-slim'
-                break
+                return 'adoptopenjdk:11.0.6_10-jre-openj9-0.18.1'
             case JavaVersion.VERSION_12:
             case JavaVersion.VERSION_HIGHER:
-                'openjdk:13-ea-19-alpine'
-                break
+                return 'adoptopenjdk:13.0.2_8-jre-hotspot'
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
         }
