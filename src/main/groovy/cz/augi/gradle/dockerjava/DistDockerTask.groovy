@@ -11,6 +11,7 @@ import org.gradle.api.tasks.application.CreateStartScripts
 
 import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.time.Clock
 
@@ -27,7 +28,7 @@ class DistDockerTask extends DefaultTask {
     @Nested
     DistDockerSettings settings
 
-    def createDockerfile(File workDir, String tarFileName, String tarRootDirectory, CreateStartScripts startScripts) {
+    def createDockerfile(File workDir, String unpackedDistributionDir, String applicationJarFilename, CreateStartScripts startScripts) {
         def dockerFile = new File(workDir, 'Dockerfile')
         dockerFile.delete()
         if (dockerExecutor.getDockerPlatform().toLowerCase().contains('win')) {
@@ -39,8 +40,9 @@ class DistDockerTask extends DefaultTask {
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
             dockerFile << 'LABEL ' + getLabels().collect { "\"${it.key}\"=\"${it.value}\"" }.join(' ') + '\n'
             settings.dockerfileLines.each { dockerFile << it + '\n' }
-            dockerFile << "ADD $tarFileName C:\n"
-            dockerFile << "WORKDIR C:\\\\$tarRootDirectory\\\\bin\n"
+            dockerFile << "COPY $unpackedDistributionDir C:\n"
+            dockerFile << "COPY $applicationJarFilename C:\\\\lib\n"
+            dockerFile << "WORKDIR C:\\\\bin\n"
             dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name} ${settings.arguments.join(' ')}"
         } else {
             dockerFile << 'FROM ' + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
@@ -50,8 +52,9 @@ class DistDockerTask extends DefaultTask {
             settings.volumes.each { dockerFile << "VOLUME $it\n" }
             dockerFile << 'LABEL ' + getLabels().collect { "\"${it.key}\"=\"${it.value}\"" }.join(' ') + '\n'
             settings.dockerfileLines.each { dockerFile << it + '\n' }
-            dockerFile << "ADD $tarFileName /var\n"
-            dockerFile << "WORKDIR /var/$tarRootDirectory/bin\n"
+            dockerFile << "COPY $unpackedDistributionDir /var/app\n"
+            dockerFile << "COPY $applicationJarFilename /var/app/lib\n"
+            dockerFile << "WORKDIR /var/app/bin\n"
             if (settings.javaVersion == JavaVersion.VERSION_1_8) {
                 dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS"\n'
             }
@@ -152,15 +155,19 @@ class DistDockerTask extends DefaultTask {
             args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         } else {
-            def tarFile = new File(workDir.toFile(), 'dist.tar')
-
-            File sourceTar = settings.project.tasks.distTar.archivePath
-            Files.copy(sourceTar.toPath(), tarFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
+            File sourceTar = project.tasks.distTar.archivePath
             String tarRootDirectory = sourceTar.name.substring(0, sourceTar.name.lastIndexOf('.'))
-            CreateStartScripts startScripts = project.tasks.startScripts
-            createDockerfile(workDir.toFile(), tarFile.name, tarRootDirectory, startScripts)
+            project.copy {
+                it.from(project.tarTree(sourceTar))
+                it.into workDir
+            }
+            String applicationJarFilename = project.tasks.jar.archiveFileName.get()
+            Path applicationJarSourcePath = Paths.get(workDir.toAbsolutePath().toString(), tarRootDirectory, 'lib', applicationJarFilename)
+            Path applicationJarTargetPath = Paths.get(workDir.toAbsolutePath().toString(), applicationJarFilename)
+            Files.move(applicationJarSourcePath, applicationJarTargetPath, StandardCopyOption.REPLACE_EXISTING)
 
+            CreateStartScripts startScripts = project.tasks.startScripts
+            createDockerfile(workDir.toFile(), tarRootDirectory, applicationJarFilename, startScripts)
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
             args.add(workDir.toFile().absolutePath)

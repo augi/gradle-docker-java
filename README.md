@@ -7,6 +7,7 @@ Gradle plugin that wraps your JVM application to a new Docker image.
  Almost all the logic on Dockerfile generation is in [this file](src/main/groovy/cz/augi/gradle/dockerjava/DistDockerTask.groovy).
 
 The plugin takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps it to Docker image.
+ It copies files in two steps - first, it copies all files except the application JAR. And finally, it copies the application JAR. So if you change just application code, the layer with dependencies remains the same.
 
 
 Usage
