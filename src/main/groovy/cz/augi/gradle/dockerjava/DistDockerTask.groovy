@@ -3,6 +3,8 @@ package cz.augi.gradle.dockerjava
 import org.gradle.api.DefaultTask
 import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
@@ -195,11 +197,11 @@ interface DistDockerSettings {
     String[] getDockerfileLines()
     @Input @Optional
     String[] getArguments()
-    @Input @Optional
+    @InputDirectory @Optional
     File getDockerBuildDirectory()
     @Input @Optional
     File[] getFilesToCopy()
-    @Input @Optional
+    @InputFile @Optional
     File getCustomDockerfile()
     @Input @Optional
     String[] getBuildArgs()

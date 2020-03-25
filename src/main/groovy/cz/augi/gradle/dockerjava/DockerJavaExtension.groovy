@@ -11,6 +11,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
         this.dockerExecutor = dockerExecutor
         this.project = project
         this.dockerBuildDirectory = new File(project.buildDir, 'dockerJava')
+        this.dockerBuildDirectory.mkdirs()
     }
 
     String image
