@@ -35,6 +35,8 @@ dependencies {
 
 }
 
+targetCompatibility = JavaVersion.VERSION_1_8
+
 test {
     testLogging {
         events 'failed'
