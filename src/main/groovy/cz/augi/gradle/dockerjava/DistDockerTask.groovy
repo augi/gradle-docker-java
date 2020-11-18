@@ -69,20 +69,23 @@ class DistDockerTask extends DefaultTask {
     }
 
     private String getLinuxBaseImage() {
-        getAdoptOpenJdkBaseImageNamePrefix() + '-bionic'
+        getAdoptOpenJdkBaseImageNamePrefix()
     }
 
     private String getAdoptOpenJdkBaseImageNamePrefix() {
         switch (settings.javaVersion) {
             case JavaVersion.VERSION_1_8:
-                return 'adoptopenjdk:8u242-b08-jre-openj9-0.18.1'
+                return 'adoptopenjdk:8u272-b10-jre-hotspot'
             case JavaVersion.VERSION_1_9:
             case JavaVersion.VERSION_1_10:
             case JavaVersion.VERSION_11:
-                return 'adoptopenjdk:11.0.6_10-jre-openj9-0.18.1'
+                return 'adoptopenjdk:11.0.9_11-jre-hotspot'
             case JavaVersion.VERSION_12:
-            case JavaVersion.VERSION_HIGHER:
-                return 'adoptopenjdk:13.0.2_8-jre-hotspot'
+            case JavaVersion.VERSION_13:
+            case JavaVersion.VERSION_14:
+                return 'adoptopenjdk:14.0.2_12-jre-hotspot'
+            case JavaVersion.VERSION_15:
+                return 'adoptopenjdk:15.0.1_9-jre-hotspot'
             default:
                 throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
         }
