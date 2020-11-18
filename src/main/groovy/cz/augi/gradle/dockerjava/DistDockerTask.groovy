@@ -57,7 +57,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "COPY $unpackedDistributionDir /var/app\n"
             dockerFile << "COPY $applicationJarFilename /var/app/lib\n"
             dockerFile << "WORKDIR /var/app/bin\n"
-            if (settings.javaVersion == JavaVersion.VERSION_1_8) {
+            if (!settings.baseImage && settings.javaVersion == JavaVersion.VERSION_1_8) {
                 dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS"\n'
             }
             dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"${settings.arguments.collect { ",\"$it\"" }.join('')}]"
