@@ -65,7 +65,7 @@ class DistDockerTask extends DefaultTask {
     }
 
     private String getWindowsBaseImage() {
-        getAdoptOpenJdkBaseImageNamePrefix() + '-windowsservercore-ltsc2016'
+        getAdoptOpenJdkBaseImageNamePrefix() + (settings.windowsBaseImageSpecifier ? ('-' + settings.windowsBaseImageSpecifier) : '')
     }
 
     private String getLinuxBaseImage() {
@@ -188,6 +188,8 @@ interface DistDockerSettings {
     String[] getAlternativeImages()
     @Input @Optional
     JavaVersion getJavaVersion()
+    @Input @Optional
+    String getWindowsBaseImageSpecifier()
     @Input @Optional
     String getBaseImage()
     @Input @Optional

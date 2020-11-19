@@ -19,6 +19,7 @@ class DockerJavaExtension implements DistDockerSettings, DockerPushSettings {
     JavaVersion getJavaVersion() { customJavaVersion ?: project.targetCompatibility }
     void setJavaVersion(JavaVersion version) { customJavaVersion = version }
     private JavaVersion customJavaVersion
+    String windowsBaseImageSpecifier = 'windowsservercore-ltsc2016'
     String baseImage
     Integer[] ports = []
     String[] volumes = []
