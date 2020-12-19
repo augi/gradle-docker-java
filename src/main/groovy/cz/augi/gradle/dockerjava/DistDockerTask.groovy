@@ -157,6 +157,7 @@ class DistDockerTask extends DefaultTask {
             settings.alternativeImages.each { args.addAll(['-t', it]) }
             args.addAll(['--file', settings.customDockerfile.name])
             settings.buildArgs.each { args.addAll(['--build-arg', it]) }
+            args.addAll(settings.dockerBuildArgs)
             args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         } else {
@@ -175,6 +176,7 @@ class DistDockerTask extends DefaultTask {
             createDockerfile(workDir.toFile(), tarRootDirectory, applicationJarFilename, startScripts)
             def args = ['build', '-t', settings.image]
             settings.alternativeImages.each { args.addAll(['-t', it]) }
+            args.addAll(settings.dockerBuildArgs)
             args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         }
@@ -202,6 +204,8 @@ interface DistDockerSettings {
     String[] getDockerfileLines()
     @Input @Optional
     String[] getArguments()
+    @Input @Optional
+    String[] getDockerBuildArgs()
     @InputDirectory @Optional
     File getDockerBuildDirectory()
     @Input @Optional

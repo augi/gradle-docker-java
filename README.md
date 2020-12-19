@@ -37,6 +37,7 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         dockerfileLines = ['RUN apt-get ...'] // additional lines to include to Dockerfile; default: empty
         arguments = ['--server'] // arguments to be passed to your application; default: empty
         dockerBuildDirectory = project.file('my-directory') // directory where Dockerfile is created; default: "$buildDir/dockerJava"
+        dockerBuildArgs = ['--isolation=hyperv'] // additional arguments to be send to 'docker build' command
         customDockerfile = file('Dockerfile') // path to a custom Dockerfile - then all of the previous options (except image and alternativeImages) are ignored; default: null
         filesToCopy = [project.file('my-file-txt')] // list of files to copy to the Docker working directory (so these file can be copied to the image using COPY or ADD directives)
         buildArgs = ['version=1.2.3'] // build arguments to be send to 'docker build' command when using custom Dockerfile; default: empty
