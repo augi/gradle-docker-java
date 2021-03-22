@@ -50,6 +50,8 @@ class DockerExecutor {
     }
 
     VersionNumber getVersion() {
-        VersionNumber.parse(executeToString('version', '--format', '{{.Server.Version}}'))
+        String v = executeToString('version', '--format', '{{.Server.Version}}')
+        if (v.indexOf('+') > 0) v = v.substring(0, v.indexOf('+'))
+        VersionNumber.parse(v)
     }
 }
