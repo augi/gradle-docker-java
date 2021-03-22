@@ -9,8 +9,10 @@ class GitExecutorTest extends Specification {
         def target = new GitExecutor(project)
         target.execute('init')
         project.file('file.txt') << 'content'
-        target.execute('checkout', '-b', 'master')
+        target.execute('checkout', '-b', 'main')
         target.execute('add', '.')
+        target.execute('config', 'user.email', 'test@test.com')
+        target.execute('config', 'user.name', 'test user')
         target.execute('commit', '-m', 'first commit')
         target.execute('remote', 'add', 'origin', 'https://github.com/test/test')
         when:
@@ -20,7 +22,7 @@ class GitExecutorTest extends Specification {
         then:
         url == 'https://github.com/test/test'
         ref.size() == 40
-        branch == 'master'
+        branch == 'main'
         cleanup:
         project.projectDir.deleteDir()
     }
