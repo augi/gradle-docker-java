@@ -1,6 +1,4 @@
-# Gradle Docker Java Plugin
-
-[![Build Status](https://travis-ci.org/augi/gradle-docker-java.svg)](https://travis-ci.org/augi/gradle-docker-java) [ ![Download](https://api.bintray.com/packages/augi/maven/gradle-docker-java/images/download.svg) ](https://bintray.com/augi/maven/gradle-docker-java/_latestVersion)
+# Gradle Docker Java Plugin [![Build](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml)
 
 Gradle plugin that wraps your JVM application to a new Docker image.
  The image has [standard labels](http://label-schema.org/rc1/) derived from the build environment (environment variables, Git).
@@ -12,18 +10,11 @@ The plugin takes product of `distTar` task (added by [the application plugin](ht
 
 Usage
 =====
-Only `image` parameter is mandatory - it's name of the resulting image.
+The plugin is published to [Gradle Plugins portal](https://plugins.gradle.org/plugin/cz.augi.docker-java). Only the `image` parameter is mandatory - it's the name of the resulting image.
 
-	buildscript {
-		repositories {
-			jcenter()
-		}
-		dependencies {
-			classpath 'cz.augi:gradle-docker-java:putCurrentVersionHere'
-		}
-	}
-
-	apply plugin: 'docker-java'
+	plugins {
+        id 'cz.augi.docker-java' version 'putCurrentVersionHere'
+    }
 	
 	dockerJava {
         image = "myorg/my-app:$version" // name of the resulting Docker image; mandatory
@@ -47,12 +38,6 @@ Only `image` parameter is mandatory - it's name of the resulting image.
         registry = 'docker.company.com' // Docker registry used to login; default: tries to extract it from 'image'
         removeImage = false // indicates if the image should be removed after publishing, default is true        
 	}
-
-The plugin can be also applied using [the new Gradle syntax](https://plugins.gradle.org/plugin/cz.augi.docker-java):
-
-    plugins {
-      id 'cz.augi.docker-java' version 'putCurrentVersionHere'
-    }
 
 The plugin provides following tasks:
  * `distDocker` - creates temporary Dockerfile and build it to a new Docker image

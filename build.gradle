@@ -1,30 +1,15 @@
-buildscript {
-    repositories {
-        jcenter()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
-    }
-    dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.8.5'
-        classpath 'com.gradle.publish:plugin-publish-plugin:0.13.0'
-    }
-}
-
 plugins {
     id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '0.13.0'
 }
+
+apply plugin: 'groovy'
 
 group 'cz.augi'
 version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
 
-apply plugin: 'groovy'
-apply plugin: 'maven'
-apply plugin: 'com.jfrog.bintray'
-apply plugin: "com.gradle.plugin-publish"
-
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -41,36 +26,6 @@ test {
     testLogging {
         events 'failed'
         exceptionFormat 'full'
-    }
-}
-
-task sourcesJar(type: Jar) {
-    from sourceSets.main.allSource
-    archiveClassifier = 'sources'
-}
-
-artifacts {
-    archives sourcesJar
-}
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    configurations = ['archives']
-    publish = true
-    pkg {
-        repo = 'maven'
-        name = 'gradle-docker-java'
-        desc = 'Gradle plugin that wraps your JVM application to a new Docker image.'
-        licenses = ['MIT']
-        vcsUrl = 'https://github.com/augi/gradle-docker-java.git'
-        websiteUrl = 'https://github.com/augi/gradle-docker-java'
-        issueTrackerUrl = 'https://github.com/augi/gradle-docker-java/issues'
-        labels = ['gradle', 'docker', 'java', 'jvm']
-        version {
-            name = project.version
-            vcsTag = project.version
-        }
     }
 }
 
