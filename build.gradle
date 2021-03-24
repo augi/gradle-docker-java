@@ -1,9 +1,13 @@
 plugins {
     id 'java-gradle-plugin'
+    id 'signing'
+    id 'io.github.gradle-nexus.publish-plugin' version '1.0.0'
     id 'com.gradle.plugin-publish' version '0.13.0'
 }
 
 apply plugin: 'groovy'
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
 
 group 'cz.augi'
 version = version == 'unspecified' ? 'DEVELOPER-SNAPSHOT' : version
@@ -42,5 +46,56 @@ pluginBundle {
             id = 'cz.augi.docker-java'
             displayName = 'Gradle Docker Java plugin'
         }
+    }
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from(components.java)
+            artifactId = archivesBaseName
+            pom {
+                name = 'Gradle Docker Java Plugin'
+                description = 'Gradle plugin that wraps your JVM application to a new Docker image.'
+                url = 'https://github.com/augi/gradle-docker-java'
+                licenses {
+                    license {
+                        name = 'The MIT License'
+                        url = 'http://www.opensource.org/licenses/mit-license.php'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'augi'
+                        name = 'Michal Augustýn'
+                        email = 'augustyn.michal@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:git://github.com/augi/gradle-docker-java.git'
+                    developerConnection = 'scm:git:ssh://github.com/augi/gradle-docker-java.git'
+                    url = 'https://github.com/augi/gradle-docker-java'
+                }
+            }
+        }
+    }
+}
+
+signing {
+    String base64Key = System.getenv('SIGNING_KEY')
+    if (base64Key) {
+        useInMemoryPgpKeys(new String(Base64.decoder.decode(base64Key)), System.getenv('SIGNING_PASSWORD'))
+        sign publishing.publications
+    }
+}
+
+nexusPublishing {
+    repositories {
+        sonatype()
     }
 }

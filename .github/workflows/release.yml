@@ -20,3 +20,7 @@ jobs:
         env:
           GRADLE_PORTAL_KEY: ${{ secrets.GRADLE_PORTAL_KEY }}
           GRADLE_PORTAL_SECRET: ${{ secrets.GRADLE_PORTAL_SECRET }}
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          ORG_GRADLE_PROJECT_sonatypeUsername: ${{ secrets.SONATYPE_USERNAME }}
+          ORG_GRADLE_PROJECT_sonatypePassword: ${{ secrets.SONATYPE_PASSWORD }}
