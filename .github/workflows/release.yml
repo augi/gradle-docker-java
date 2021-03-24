@@ -16,7 +16,7 @@ jobs:
       - name: Check with Gradle
         run: ./gradlew check --info -Pversion=${{ github.event.release.tag_name }}
       - name: Publish with Gradle to Gradle Plugins portal
-        run: ./gradlew publishPlugins --info -Pversion=${{ github.event.release.tag_name }}
+        run: ./gradlew publishToSonatype closeAndReleaseSonatypeStagingRepository publishPlugins --info -Pversion=${{ github.event.release.tag_name }}
         env:
           GRADLE_PORTAL_KEY: ${{ secrets.GRADLE_PORTAL_KEY }}
           GRADLE_PORTAL_SECRET: ${{ secrets.GRADLE_PORTAL_SECRET }}
