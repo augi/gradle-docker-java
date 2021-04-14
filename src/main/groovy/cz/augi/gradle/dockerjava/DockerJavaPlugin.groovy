@@ -10,7 +10,7 @@ class DockerJavaPlugin implements Plugin<Project> {
 
         def dockerExecutor = new DockerExecutor(project)
         def gitExecutor = new GitExecutor(project)
-        def extension = project.extensions.create('dockerJava', DockerJavaExtension, project, dockerExecutor)
+        def extension = project.extensions.create('dockerJava', DockerJavaExtension, project)
         def distDocker = project.tasks.create('distDocker', DistDockerTask)
         def dockerPush = project.tasks.create('dockerPush', DockerPushTask)
         distDocker.settings = extension
