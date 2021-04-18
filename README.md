@@ -1,4 +1,4 @@
-# Gradle Docker Java Plugin [![Build](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml)
+# Gradle Docker Java Plugin [![Build](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml/badge.svg)](https://github.com/augi/gradle-docker-java/actions/workflows/build.yml) [![Version](https://badgen.net/maven/v/maven-central/cz.augi/gradle-docker-java)](https://repo1.maven.org/maven2/cz/augi/gradle-docker-java/)
 
 Gradle plugin that wraps your JVM application to a new Docker image.
  The image has [standard labels](http://label-schema.org/rc1/) derived from the build environment (environment variables, Git).
