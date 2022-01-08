@@ -7,6 +7,7 @@ Gradle plugin that wraps your JVM application to a new Docker image.
 The plugin takes product of `distTar` task (added by [the application plugin](https://docs.gradle.org/current/userguide/application_plugin.html)) and wraps it to Docker image.
  It copies files in two steps - first, it copies all files except the application JAR. And finally, it copies the application JAR. So if you change just application code, the layer with dependencies remains the same.
 
+The plugin just generates the `Dockerfile` and then executes the `docker` commands, so it works even on Windows with Windows Containers. This can be the reason why to use this plugin instead of https://github.com/GoogleContainerTools/jib (that doesn't support Windows containers). You could also consider https://github.com/bmuschko/gradle-docker-plugin that uses Docker remove API.
 
 Usage
 =====
