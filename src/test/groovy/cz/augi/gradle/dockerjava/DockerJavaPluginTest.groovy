@@ -62,6 +62,7 @@ class DockerJavaPluginTest extends Specification {
         dockerRunOutput.contains('Hello from Docker, developer')
         labels.'org.label-schema.schema-version' == '1.0'
         labels.'org.label-schema.version' == '1.2.3'
+        labels.'org.opencontainers.image.version' == '1.2.3'
         labels.'mylabel' == 'mylabelvalue'
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))

@@ -92,20 +92,30 @@ class DistDockerTask extends DefaultTask {
     }
 
     private Map<String, String> getLabels() {
+        def url = getUrl()
+        def vcsUrl = getVcsUrl()
+        def vcsRef = getVcsRef()
+
+        // https://label-schema.org/
         def labels = ['org.label-schema.schema-version':'1.0']
         labels.put('org.label-schema.build-date', Clock.systemUTC().instant().toString())
         labels.put('org.label-schema.version', project.version.toString())
         labels.put('org.label-schema.name', project.name)
-        if (project.description) {
-            labels.put('org.label-schema.description', project.description)
-        }
-        def url = getUrl()
+        if (project.description) labels.put('org.label-schema.description', project.description)
         if (url) labels.put('org.label-schema.url', url)
-        def vcsUrl = getVcsUrl()
         if (vcsUrl) labels.put('org.label-schema.vcs-url', vcsUrl)
-        def vcsRef = getVcsRef()
         if (vcsRef) labels.put('org.label-schema.vcs-ref', vcsRef)
         labels.put('org.label-schema.docker.cmd', "docker run -d ${settings.ports.collect { "-p $it:$it" }.join(' ')} ${settings.volumes.collect { "-v $it:$it" }.join(' ')} ${settings.image}")
+
+        // https://github.com/opencontainers/image-spec/blob/main/annotations.md
+        labels.put('org.opencontainers.image.created', Clock.systemUTC().instant().toString())
+        labels.put('org.opencontainers.image.version', project.version.toString())
+        labels.put('org.opencontainers.image.title', project.name)
+        if (project.description) labels.put('org.opencontainers.image.description', project.description)
+        if (url) labels.put('org.opencontainers.image.url', url)
+        if (vcsUrl) labels.put('org.opencontainers.image.source', vcsUrl)
+        if (vcsRef) labels.put('org.opencontainers.image.revision', vcsRef)
+
         labels.putAll(settings.labels)
         labels
     }
