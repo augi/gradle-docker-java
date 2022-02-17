@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.platform.base.Platform
 import org.gradle.process.ExecSpec
-import org.gradle.util.VersionNumber
+import org.gradle.util.internal.VersionNumber
 
 class DockerExecutor {
     private final Project project

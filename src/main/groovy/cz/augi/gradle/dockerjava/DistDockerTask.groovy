@@ -34,7 +34,7 @@ class DistDockerTask extends DefaultTask {
         def dockerFile = new File(workDir, 'Dockerfile')
         dockerFile.delete()
         if (dockerExecutor.getDockerPlatform().toLowerCase().contains('win')) {
-            dockerFile << 'FROM ' + (settings.baseImage ?: getWindowsBaseImage()) + '\n'
+            dockerFile << 'FROM ' + settings.baseImage + '\n'
             dockerFile << 'SHELL ["cmd", "/S", "/C"]\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
@@ -47,7 +47,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "WORKDIR C:\\\\bin\n"
             dockerFile << "ENTRYPOINT ${startScripts.windowsScript.name} ${settings.arguments.join(' ')}"
         } else {
-            dockerFile << 'FROM ' + (settings.baseImage ?: getLinuxBaseImage()) + '\n'
+            dockerFile << 'FROM ' + settings.baseImage + '\n'
             if (settings.ports.any()) {
                 dockerFile << 'EXPOSE ' + settings.ports.join(' ') + '\n'
             }
@@ -57,37 +57,7 @@ class DistDockerTask extends DefaultTask {
             dockerFile << "COPY $unpackedDistributionDir /var/app\n"
             dockerFile << "COPY $applicationJarFilename /var/app/lib\n"
             dockerFile << "WORKDIR /var/app/bin\n"
-            if (!settings.baseImage && settings.javaVersion == JavaVersion.VERSION_1_8) {
-                dockerFile << 'ENV JAVA_OPTS="-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap $JAVA_OPTS"\n'
-            }
             dockerFile << "ENTRYPOINT [\"./${startScripts.unixScript.name}\"${settings.arguments.collect { ",\"$it\"" }.join('')}]"
-        }
-    }
-
-    private String getWindowsBaseImage() {
-        getAdoptOpenJdkBaseImageNamePrefix() + (settings.windowsBaseImageSpecifier ? ('-' + settings.windowsBaseImageSpecifier) : '')
-    }
-
-    private String getLinuxBaseImage() {
-        getAdoptOpenJdkBaseImageNamePrefix()
-    }
-
-    private String getAdoptOpenJdkBaseImageNamePrefix() {
-        switch (settings.javaVersion) {
-            case JavaVersion.VERSION_1_8:
-                return 'adoptopenjdk:8u272-b10-jre-hotspot'
-            case JavaVersion.VERSION_1_9:
-            case JavaVersion.VERSION_1_10:
-            case JavaVersion.VERSION_11:
-                return 'adoptopenjdk:11.0.9_11-jre-hotspot'
-            case JavaVersion.VERSION_12:
-            case JavaVersion.VERSION_13:
-            case JavaVersion.VERSION_14:
-                return 'adoptopenjdk:14.0.2_12-jre-hotspot'
-            case JavaVersion.VERSION_15:
-                return 'adoptopenjdk:15.0.1_9-jre-hotspot'
-            default:
-                throw new RuntimeException("Java version ${settings.javaVersion} is not supported")
         }
     }
 
@@ -198,11 +168,7 @@ interface DistDockerSettings {
     String getImage()
     @Input @Optional
     String[] getAlternativeImages()
-    @Input @Optional
-    JavaVersion getJavaVersion()
-    @Input @Optional
-    String getWindowsBaseImageSpecifier()
-    @Input @Optional
+    @Input
     String getBaseImage()
     @Input @Optional
     Integer[] getPorts()

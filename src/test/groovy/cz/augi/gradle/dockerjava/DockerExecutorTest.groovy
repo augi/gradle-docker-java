@@ -1,7 +1,7 @@
 package cz.augi.gradle.dockerjava
 
 import org.gradle.testfixtures.ProjectBuilder
-import org.gradle.util.VersionNumber
+import org.gradle.util.internal.VersionNumber
 import spock.lang.Specification
 
 class DockerExecutorTest extends Specification {
