@@ -168,7 +168,7 @@ interface DistDockerSettings {
     String getImage()
     @Input @Optional
     String[] getAlternativeImages()
-    @Input
+    @Input @Optional
     String getBaseImage()
     @Input @Optional
     Integer[] getPorts()
