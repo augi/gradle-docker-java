@@ -4,7 +4,7 @@ plugins {
     id 'java-gradle-plugin'
     id 'signing'
     id 'io.github.gradle-nexus.publish-plugin' version '1.1.0'
-    id 'com.gradle.plugin-publish' version '0.21.0'
+    id 'com.gradle.plugin-publish' version '1.0.0'
 }
 
 group 'cz.augi'
@@ -33,16 +33,21 @@ test {
 
 project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
 project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
+
 pluginBundle {
     website = 'https://github.com/augi/gradle-docker-java'
     vcsUrl = 'https://github.com/augi/gradle-docker-java'
-    description = 'Gradle plugin that wraps your JVM application to a new Docker image.'
-    tags = ['docker', 'java', 'jvm']
 
+    tags = ['docker', 'java', 'jvm']
+}
+
+gradlePlugin {
     plugins {
         dockerJavaPlugin {
             id = 'cz.augi.docker-java'
             displayName = 'Gradle Docker Java plugin'
+            description = 'Gradle plugin that wraps your JVM application to a new Docker image.'
+            implementationClass = 'cz.augi.gradle.dockerjava.DockerJavaPlugin'
         }
     }
 }
