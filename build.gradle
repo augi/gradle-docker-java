@@ -34,13 +34,6 @@ test {
 project.ext.set('gradle.publish.key', System.getenv('GRADLE_PORTAL_KEY'))
 project.ext.set('gradle.publish.secret', System.getenv('GRADLE_PORTAL_SECRET'))
 
-pluginBundle {
-    website = 'https://github.com/augi/gradle-docker-java'
-    vcsUrl = 'https://github.com/augi/gradle-docker-java'
-
-    tags = ['docker', 'java', 'jvm']
-}
-
 gradlePlugin {
     plugins {
         dockerJavaPlugin {
@@ -48,6 +41,7 @@ gradlePlugin {
             displayName = 'Gradle Docker Java plugin'
             description = 'Gradle plugin that wraps your JVM application to a new Docker image.'
             implementationClass = 'cz.augi.gradle.dockerjava.DockerJavaPlugin'
+            tags.set(['docker', 'java', 'jvm'])
         }
     }
 }
