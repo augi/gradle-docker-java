@@ -16,8 +16,7 @@ The plugin is published to [Gradle Plugins portal](https://plugins.gradle.org/pl
 There are actually two use-cases:
 1. You have your own `Dockerfile` - then you can specify path to it using `customDockerfile`, and the plugin actually just executes `docker build` to get the Docker image
 2. You don't have your own `Dockerfile`, then you have to specify `baseImage` only, and the `Dockerfile` will be generated for you.
-
-
+```gradle
     plugins {
         id 'cz.augi.docker-java' version 'putCurrentVersionHere'
     }
@@ -46,6 +45,7 @@ There are actually two use-cases:
         registry = 'docker.company.com' // Docker registry used to login; default: tries to extract it from 'image'
         removeImage = false // indicates if the image should be removed after publishing, default is true        
     }
+```
 
 The plugin provides following tasks:
  * `distDocker` - creates temporary Dockerfile and build it to a new Docker image
