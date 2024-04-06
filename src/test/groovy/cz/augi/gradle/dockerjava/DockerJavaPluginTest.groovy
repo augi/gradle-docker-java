@@ -31,7 +31,7 @@ class DockerJavaPluginTest extends Specification {
             }
             mainClassName = 'cz.augi.gradle.dockerjava.TestApp'
             dockerJava {
-                baseImage = 'adoptopenjdk:8u272-b10-jre-hotspot'
+                baseImage = 'eclipse-temurin:17.0.10_7-jre'
                 image = "test/my-app:$version"
                 ports = [80, 8080]
                 volumes = ['/test-volume']
