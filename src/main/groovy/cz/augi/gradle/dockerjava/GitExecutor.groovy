@@ -16,15 +16,20 @@ class GitExecutor {
     String execute(String... args) {
         new ByteArrayOutputStream().withStream { os ->
             new ByteArrayOutputStream().withStream { es ->
-                project.exec { ExecSpec e ->
+                def execResult = project.exec { ExecSpec e ->
                     def finalArgs = ['git']
                     finalArgs.addAll(args)
                     e.commandLine finalArgs
                     e.standardOutput os
                     e.errorOutput es
+                    e.ignoreExitValue true
                 }
+                def so = os.toString().trim()
                 def eo = es.toString().trim()
-                if (eo) logger.debug("Error output from 'git ${args.join(' ')}' command: $eo")
+                if (so || eo) logger.debug("Error output from 'git ${args.join(' ')}' command: $so\n$eo")
+                if (execResult.exitValue != 0) {
+                    throw new RuntimeException("Cannot execute 'git ${args.join(' ')}' command: ${os.toString().trim()}\n$so\n$eo")
+                }
             }
             os.toString().trim()
         }
