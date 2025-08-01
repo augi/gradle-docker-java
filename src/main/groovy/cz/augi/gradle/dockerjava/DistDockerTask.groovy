@@ -1,7 +1,6 @@
 package cz.augi.gradle.dockerjava
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.JavaVersion
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.InputFile
@@ -141,7 +140,7 @@ class DistDockerTask extends DefaultTask {
             args.add(workDir.toFile().absolutePath)
             dockerExecutor.execute(*args)
         } else {
-            File sourceTar = project.tasks.distTar.archivePath
+            File sourceTar = project.tasks.distTar.archiveFile.get().getAsFile()
             String tarRootDirectory = sourceTar.name.substring(0, sourceTar.name.lastIndexOf('.'))
             project.copy {
                 it.from(project.tarTree(sourceTar))
