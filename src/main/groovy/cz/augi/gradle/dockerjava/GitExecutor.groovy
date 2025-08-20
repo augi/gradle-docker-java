@@ -15,6 +15,7 @@ class GitExecutor {
 
     String execute(String... args) {
         def execResult = project.providers.exec { ExecSpec e ->
+            e.workingDir = project.projectDir
             def finalArgs = ['git']
             finalArgs.addAll(args)
             e.commandLine finalArgs
