@@ -28,17 +28,17 @@ class DockerPushTask extends DefaultTask {
         try {
             if (settings.username) {
                 if (dockerExecutor.version >= VersionNumber.parse('17.07.0')) {
-                    project.exec {
+                    project.providers.exec {
                         it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
                         it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
                     }
                 } else {
-                    project.exec {
+                    project.providers.exec {
                         it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
                     }
                 }
             }
-            project.exec {
+            project.providers.exec {
                 def args = ['docker']
                 if (settings.username) {
                     args.addAll(['--config', dockerConfigDir.absolutePath])
@@ -52,7 +52,7 @@ class DockerPushTask extends DefaultTask {
                     args.addAll(['--config', dockerConfigDir.absolutePath])
                 }
                 args.addAll(['push', alternativeImage])
-                project.exec {
+                project.providers.exec {
                     it.commandLine(*args)
                 }
             }
@@ -67,7 +67,7 @@ class DockerPushTask extends DefaultTask {
         if (settings.removeImage) {
             def args = ['docker', 'rmi', '--force', settings.image]
             args.addAll(settings.alternativeImages)
-            project.exec {
+            project.providers.exec {
                 it.commandLine(*args)
             }
         }

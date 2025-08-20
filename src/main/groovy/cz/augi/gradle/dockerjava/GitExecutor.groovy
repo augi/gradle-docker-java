@@ -16,7 +16,7 @@ class GitExecutor {
     String execute(String... args) {
         new ByteArrayOutputStream().withStream { os ->
             new ByteArrayOutputStream().withStream { es ->
-                def execResult = project.exec { ExecSpec e ->
+                def execResult = project.providers.exec { ExecSpec e ->
                     def finalArgs = ['git']
                     finalArgs.addAll(args)
                     e.commandLine finalArgs

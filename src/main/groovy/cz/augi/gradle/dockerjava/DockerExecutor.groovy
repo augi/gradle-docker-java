@@ -27,7 +27,7 @@ class DockerExecutor {
     }
 
     private void executeWithCustomOutput(OutputStream os, String... args) {
-        project.exec { ExecSpec e ->
+        project.providers.exec { ExecSpec e ->
             def finalArgs = ['docker']
             finalArgs.addAll(args)
             e.commandLine finalArgs
