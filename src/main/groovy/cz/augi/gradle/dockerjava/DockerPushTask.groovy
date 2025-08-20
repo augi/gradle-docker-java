@@ -31,11 +31,11 @@ class DockerPushTask extends DefaultTask {
                     project.providers.exec {
                         it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '--password-stdin', settings.registry
                         it.standardInput = new ByteArrayInputStream((settings.password ?: '').getBytes(StandardCharsets.UTF_8))
-                    }
+                    }.result.get()
                 } else {
                     project.providers.exec {
                         it.commandLine 'docker', '--config', dockerConfigDir.absolutePath, 'login', '-u', settings.username, '-p', settings.password, settings.registry
-                    }
+                    }.result.get()
                 }
             }
             project.providers.exec {
@@ -45,7 +45,7 @@ class DockerPushTask extends DefaultTask {
                 }
                 args.addAll(['push', settings.image])
                 it.commandLine(*args)
-            }
+            }.result.get()
             settings.alternativeImages.each { alternativeImage ->
                 def args = ['docker']
                 if (settings.username) {
@@ -54,7 +54,7 @@ class DockerPushTask extends DefaultTask {
                 args.addAll(['push', alternativeImage])
                 project.providers.exec {
                     it.commandLine(*args)
-                }
+                }.result.get()
             }
         } finally {
             if (dockerConfigDir.exists()) {
@@ -69,7 +69,7 @@ class DockerPushTask extends DefaultTask {
             args.addAll(settings.alternativeImages)
             project.providers.exec {
                 it.commandLine(*args)
-            }
+            }.result.get()
         }
     }
 }
