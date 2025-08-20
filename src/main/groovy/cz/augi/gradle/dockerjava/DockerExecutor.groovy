@@ -17,6 +17,7 @@ class DockerExecutor {
 
     String execute(String... args) {
         def er = project.providers.exec { ExecSpec e ->
+            e.workingDir = project.projectDir
             def finalArgs = ['docker']
             finalArgs.addAll(args)
             e.commandLine finalArgs

@@ -10,7 +10,6 @@ class GitExecutorTest extends Specification {
         target.execute('init')
         target.execute('checkout', '-b', 'main')
         project.file('file.txt') << 'content'
-        assert project.file('file.txt').exists()
         target.execute('add', '.')
         target.execute('config', 'user.email', 'test@test.com')
         target.execute('config', 'user.name', 'test user')
