@@ -15,42 +15,29 @@ class DockerExecutor {
         this.logger = project.logger
     }
 
-    String executeToString(String... args) {
-        new ByteArrayOutputStream().withStream { os ->
-            executeWithCustomOutput(os, args)
-            os.toString().trim()
-        }
-    }
-
-    void execute(String... args) {
-        executeWithCustomOutput(null, args)
-    }
-
-    private void executeWithCustomOutput(OutputStream os, String... args) {
-        project.providers.exec { ExecSpec e ->
+    String execute(String... args) {
+        def er = project.providers.exec { ExecSpec e ->
             def finalArgs = ['docker']
             finalArgs.addAll(args)
             e.commandLine finalArgs
-            if (os != null) {
-                e.standardOutput os
-            }
         }
+        er.standardOutput.asText.get().trim()
     }
 
     List<String> getDockerInfo() {
-        def asString = executeToString('info')
+        def asString = execute('info')
         logger.debug("Docker info: $asString")
         asString.readLines()
     }
 
     String getDockerPlatform() {
-        String osType = executeToString('info', '--format', '{{.OSType}}')
+        String osType = execute('info', '--format', '{{.OSType}}')
         Platform
         osType.empty ? System.getProperty("os.name") : osType
     }
 
     VersionNumber getVersion() {
-        String v = executeToString('version', '--format', '{{.Server.Version}}')
+        String v = execute('version', '--format', '{{.Server.Version}}')
         if (v.indexOf('+') > 0) v = v.substring(0, v.indexOf('+'))
         VersionNumber.parse(v)
     }
