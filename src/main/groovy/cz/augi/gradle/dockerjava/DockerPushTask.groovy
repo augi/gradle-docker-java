@@ -24,7 +24,7 @@ class DockerPushTask extends DefaultTask {
     @TaskAction
     def push() {
         assert settings.image : 'Image must be specified'
-        def dockerConfigDir = new File(project.buildDir, 'localDockerConfig')
+        def dockerConfigDir = new File(project.layout.buildDirectory.get().getAsFile(), 'localDockerConfig')
         try {
             if (settings.username) {
                 if (dockerExecutor.version >= VersionNumber.parse('17.07.0')) {
