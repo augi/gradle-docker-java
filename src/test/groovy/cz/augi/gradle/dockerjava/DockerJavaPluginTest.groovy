@@ -55,8 +55,8 @@ class DockerJavaPluginTest extends Specification {
                 .withArguments('distDocker', '-Pversion=1.2.3', '-S')
                 .withPluginClasspath()
                 .build()
-        def dockerRunOutput = dockerExecutor.executeToString('run', '--rm', 'test/my-app:1.2.3')
-        def dockerInspectOutput = dockerExecutor.executeToString('inspect', 'test/my-app:1.2.3')
+        def dockerRunOutput = dockerExecutor.execute('run', '--rm', 'test/my-app:1.2.3')
+        def dockerInspectOutput = dockerExecutor.execute('inspect', 'test/my-app:1.2.3')
         def labels = new JsonSlurper().parseText(dockerInspectOutput)[0].Config.Labels
         then:
         !gradleExecutionResult.output.contains('FAILED')
@@ -68,7 +68,7 @@ class DockerJavaPluginTest extends Specification {
         def workingDirectory = Paths.get(projectDir.absolutePath, 'build', 'dockerJava')
         Files.exists(workingDirectory.resolve('Dockerfile'))
         cleanup:
-        dockerExecutor.executeToString('rmi', 'test/my-app:1.2.3')
+        dockerExecutor.execute('rmi', 'test/my-app:1.2.3')
         dockerExecutor.project.projectDir.deleteDir()
         projectDir.deleteDir()
     }

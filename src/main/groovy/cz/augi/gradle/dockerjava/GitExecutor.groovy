@@ -14,25 +14,20 @@ class GitExecutor {
     }
 
     String execute(String... args) {
-        new ByteArrayOutputStream().withStream { os ->
-            new ByteArrayOutputStream().withStream { es ->
-                def execResult = project.exec { ExecSpec e ->
-                    def finalArgs = ['git']
-                    finalArgs.addAll(args)
-                    e.commandLine finalArgs
-                    e.standardOutput os
-                    e.errorOutput es
-                    e.ignoreExitValue true
-                }
-                def so = os.toString().trim()
-                def eo = es.toString().trim()
-                if (so || eo) logger.debug("Error output from 'git ${args.join(' ')}' command: $so\n$eo")
-                if (execResult.exitValue != 0) {
-                    throw new RuntimeException("Cannot execute 'git ${args.join(' ')}' command: ${os.toString().trim()}\n$so\n$eo")
-                }
-            }
-            os.toString().trim()
+        def execResult = project.providers.exec { ExecSpec e ->
+            e.workingDir = project.projectDir
+            def finalArgs = ['git']
+            finalArgs.addAll(args)
+            e.commandLine finalArgs
+            e.ignoreExitValue true
         }
+        def so = execResult.standardOutput.asText.get().trim()
+        def eo = execResult.standardError.asText.get().trim()
+        if (so || eo) logger.debug("Error output from 'git ${args.join(' ')}' command: $so\n$eo")
+        if (execResult.result.get().exitValue != 0) {
+            throw new RuntimeException("Cannot execute 'git ${args.join(' ')}' command: $so\n$eo")
+        }
+        so
     }
 
     String getUrl() {
