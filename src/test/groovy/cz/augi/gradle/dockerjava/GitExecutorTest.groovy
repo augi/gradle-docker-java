@@ -8,8 +8,8 @@ class GitExecutorTest extends Specification {
         def project = ProjectBuilder.builder().build()
         def target = new GitExecutor(project)
         target.execute('init')
-        project.file('file.txt') << 'content'
         target.execute('checkout', '-b', 'main')
+        project.file('file.txt') << 'content'
         target.execute('add', '.')
         target.execute('config', 'user.email', 'test@test.com')
         target.execute('config', 'user.name', 'test user')
