@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     testImplementation group: 'junit', name: 'junit', version: '4.13.2'
-    testImplementation ('org.spockframework:spock-core:2.3-groovy-3.0') {
+    testImplementation ('org.spockframework:spock-core:2.4-groovy-5.0') {
         exclude group:'org.codehaus.groovy'
     }
 }
